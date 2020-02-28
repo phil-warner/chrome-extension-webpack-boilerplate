@@ -11,10 +11,12 @@
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "js": ["js/content.js"],
+    "css": ["css/jquery.toolbar.css"],
+    "js": ["js/jquery-3.4.1.slim.min.js", "js/jquery.toolbar.min.js", "js/content.js"],
     "run_at": "document_end"
   }],
   "icons": {
+    "32": "img/favicon-32x32.gif",
     "128": "img/icon-128.png"
   },
   "permissions": ["tabs", "activeTab", "<all_urls>"],
