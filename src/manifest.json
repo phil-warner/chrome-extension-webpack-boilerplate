@@ -11,14 +11,24 @@
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "css": ["css/jquery.toolbar.css"],
-    "js": ["js/jquery-3.4.1.slim.min.js", "js/jquery.toolbar.min.js", "js/content.js"],
+    "css": ["css/bootstrap.min.css", "css/font-awesome.min.css", "css/jquery.toolbar.css", "css/custom.css"],
+    "js": ["js/jquery-3.4.1.min.js", "js/bootstrap.min.js", "js/jquery.toolbar.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
     "run_at": "document_end"
   }],
   "icons": {
     "32": "img/favicon-32x32.gif",
-    "128": "img/icon-128.png"
+    "128": "img/cause-logo.png"
   },
+  "web_accessible_resources": [
+    "html/*.html",
+    "img/*.png",
+    "fonts/FontAwesome.otf",
+    "fonts/fontawesome-webfont.eot",
+    "fonts/fontawesome-webfont.svg",
+    "fonts/fontawesome-webfont.ttf",
+    "fonts/fontawesome-webfont.woff",
+    "fonts/fontawesome-webfont.woff2"
+  ],
   "permissions": ["tabs", "activeTab", "<all_urls>"],
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"

@@ -1,4 +1,17 @@
 "use strict";
+const insightFactory = {};
+
+let selectionEndTimeout = null;
+
+const userSelectionChanged = function() {
+    // wait 500 ms after the last selection change event
+    if (selectionEndTimeout) {
+        clearTimeout(selectionEndTimeout);
+    }
+    selectionEndTimeout = setTimeout(function () {
+        $(window).trigger('selectionEnd');
+    }, 500);
+}
 
 const getSafeRanges = function(dangerous) {
   const ancestor = dangerous.commonAncestorContainer;
@@ -31,7 +44,6 @@ const getSafeRanges = function(dangerous) {
     }
 
   }
-
 
   // Ends -- basically the same code reversed
   const e = new Array(0);
@@ -72,10 +84,10 @@ const getSafeRanges = function(dangerous) {
   rs.push(xm);
   return rs.concat(re);
 
-}
+};
 
 
-const highlightRange = function(range) {
+const highlightRange = function(range, uuid) {
 
   if (range.toString() !== "" && range.toString().match(/\w+/g) !== null) {
     var newNode = document.createElement("span");
@@ -83,36 +95,100 @@ const highlightRange = function(range) {
       "style",
       "background-color: yellow; display: inline;"
     );
+    newNode.setAttribute(
+      "data-ifuuid",
+      uuid
+    );
     range.surroundContents(newNode);
   }
 
-}
+};
 
-
-const highlightHandler = function(e) {
+const selectionHandler = function(e) {
 
   const selection = document.getSelection();
-  if (selection !== '') {
+
+  if (selection.rangeCount > 0) {
+    // get the selected range
     const selectionRange = document.getSelection().getRangeAt(0);
-    const safeRanges = getSafeRanges(selectionRange);
-    safeRanges.forEach((range) => {
-      highlightRange(range);
+    insightFactory.safeRanges = getSafeRanges(selectionRange);
+
+    // const elem = selection.getRangeAt(0).startContainer.parentNode;
+    const uuid = StringUtils.newUUID();
+    insightFactory.uuid = uuid;
+
+    insightFactory.safeRanges.forEach((range) => {
+      highlightRange(range, uuid);
+    });
+
+    // set up the toolbar
+    $('[data-ifuuid="' + uuid + '"]:first').toolbar({
+    	content: '#toolbar-options',
+      position: 'top',
+      style: 'factory',
+      animate: 'standard',
+      event: 'hover',
+      adjustment: 1,
+      hideOnClick: true
+    }).trigger("mouseover");
+
+    // set the current UUID when the toolbar is shown
+    $('[data-ifuuid="' + uuid + '"]:first').on('toolbarShown', function( event ) {
+      insightFactory.currentUUID = uuid;
     });
   }
 
-}
+};
 
 const appendToolbar = function() {
-  const toolbar = '<div id="toolbar-options" class="hidden"><a href="#"><i class="fa fa-plane"></i></a><a href="#"><i class="fa fa-car"></i></a><a href="#"><i class="fa fa-bicycle"></i></a></div>';
+  const causeicon = chrome.runtime.getURL('img/cause-logo.png');
+  const toolbar = '<div id="toolbar-options" class="hidden"><a class="clip"><img src="' + causeicon + '" alt="clip to insight factory" height="100%" /></a><a href="#"><i class="fa fa-file-text"></i></a><a href="#"><i class="fa fa-trash"></i></a></div>';
   $('body').append(toolbar);
-}
+};
 
+const appendModal = function() {
+
+  // load and initialize the modal
+  $('body').append('<div id="clip-modal-container"></div>');
+  const clipmodal = chrome.runtime.getURL('html/clip-modal.html');
+
+  $("#clip-modal-container").load(clipmodal, function() {
+    // load the typeform
+    const embedElement = document.querySelector('#clip-modal-body');
+    window.typeformEmbed.makeWidget(embedElement, "https://davidpids.typeform.com/to/W5UkZw", {
+      hideFooter: true,
+      hideHeaders: true,
+      opacity: 0
+    });
+
+    // modal events
+    $('#clip-modal').on('show.bs.modal', function(e){
+      console.log('shown');
+    });
+  });
+
+};
+
+
+/**
+  * initialise extension
+*/
 window.onload = function() {
+
   // init the toolbar
   appendToolbar();
+  appendModal();
 
-  // event handlers
-  document.onmouseup = highlightHandler;
+  // selection event handler
+  $(window).bind('selectionEnd', function () {
+    selectionHandler();
+  });
+
+  // set up the selection changed event
+  document.onselectionchange = userSelectionChanged;
 
   // toolbar event handlers
+  $(document).on('click', 'a.clip', (e) => {
+    $('#clip-modal').modal('show');
+  });
 };

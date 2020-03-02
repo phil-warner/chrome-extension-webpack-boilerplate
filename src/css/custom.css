@@ -1,0 +1,29 @@
+.toolbar-factory {
+  background-color: #7A1D4A;
+}
+.toolbar-factory.tool-top .arrow {
+  border-color: #7A1D4A transparent transparent;
+}
+.toolbar-factory.tool-bottom .arrow {
+  border-color: transparent transparent #7A1D4A;
+}
+.toolbar-factory.tool-left .arrow {
+  border-color: transparent transparent transparent #7A1D4A;
+}
+.toolbar-factory.tool-right .arrow {
+  border-color: transparent #7A1D4A transparent transparent;
+}
+.toolbar-factory .tool-item > .fa {
+  color: white;
+}
+.toolbar-factory .tool-item.selected,
+.toolbar-factory .tool-item:hover {
+  background: #901A69;
+  color: white;
+}
+.toolbar-factory a:hover {
+  border-bottom-color: transparent
+}
+.tool-item {
+  font-size: 14px;
+}
