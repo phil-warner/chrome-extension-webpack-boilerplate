@@ -6,17 +6,14 @@
     "jquery": true,
     "commonjs": true
   },
-  "extends": ["eslint:recommended","plugin:security/recommended"],
+  "extends": ["eslint:recommended"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "kollektive": true,
-    "grecaptcha": true,
-    "Stripe": true,
-    "ProgressBar": true,
-    "ko": true
+    "StringUtils": true,
+    "SelectionUtils": true,
+    "chrome": true
   },
-  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
@@ -27,9 +24,5 @@
     "no-console": ["error", { "allow": ["warn", "error", "info"] }]
   },
   "plugins": [
-    "babel",
-    "import",
-    "ejs",
-    "security"
   ]
 }

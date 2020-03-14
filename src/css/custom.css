@@ -1,29 +1,96 @@
+/* brand styles */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+body {
+  position: relative;
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 22.4px;
+  color: #555555;
+  background: #fff;
+  margin: 0;
+}
+
+a {
+  color: #9d2053;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: .4;
+}
+
+/* toolbar styles */
 .toolbar-factory {
   background-color: #7A1D4A;
 }
+
 .toolbar-factory.tool-top .arrow {
   border-color: #7A1D4A transparent transparent;
 }
+
 .toolbar-factory.tool-bottom .arrow {
   border-color: transparent transparent #7A1D4A;
 }
+
 .toolbar-factory.tool-left .arrow {
   border-color: transparent transparent transparent #7A1D4A;
 }
+
 .toolbar-factory.tool-right .arrow {
   border-color: transparent #7A1D4A transparent transparent;
 }
-.toolbar-factory .tool-item > .fa {
+
+.toolbar-factory .tool-item>.fa {
   color: white;
 }
+
 .toolbar-factory .tool-item.selected,
 .toolbar-factory .tool-item:hover {
   background: #901A69;
   color: white;
 }
+
 .toolbar-factory a:hover {
   border-bottom-color: transparent
 }
+
 .tool-item {
   font-size: 14px;
+}
+
+/* modal styles */
+.ca-clipper .clipper-header {
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+  line-height: 22.4px;
+  color: #555555;
+}
+
+.ca-clipper .full-modal-content {
+  overflow: hidden;
+  height: 600px;
+}
+
+.ca-clipper-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* bootstrap overrides */
+.btn {
+  border-radius: 2px;
 }

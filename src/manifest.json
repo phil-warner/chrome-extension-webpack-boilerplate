@@ -1,5 +1,6 @@
 {
-  "name": "Insight Factory Clipper",
+  "name": "Cause Analytics Clipper",
+  "description": " Use the this extension to save things you see on the web into your Cause Analytics account.",
   "options_page": "options.html",
   "version": "0.1",
   "background": {
@@ -7,12 +8,12 @@
   },
   "browser_action": {
     "default_popup": "popup.html",
-    "default_icon": "img/icon-34.png"
+    "default_icon": "img/cause-logo.png"
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "css": ["css/bootstrap.min.css", "css/font-awesome.min.css", "css/jquery.toolbar.css", "css/custom.css"],
-    "js": ["js/jquery-3.4.1.min.js", "js/bootstrap.min.js", "js/jquery.toolbar.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
+    "css": ["css/font-awesome.min.css", "css/jquery.toolbar.css", "css/animate.min.css", "css/custom.css"],
+    "js": ["js/jquery-3.4.1.min.js", "js/animated-modal.js", "js/jquery.toolbar.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
     "run_at": "document_end"
   }],
   "icons": {
@@ -22,6 +23,7 @@
   "web_accessible_resources": [
     "html/*.html",
     "img/*.png",
+    "css/*.css",
     "fonts/FontAwesome.otf",
     "fonts/fontawesome-webfont.eot",
     "fonts/fontawesome-webfont.svg",
