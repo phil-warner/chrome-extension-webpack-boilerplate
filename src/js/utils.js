@@ -31,6 +31,29 @@ class StringUtils {
 }
 
 
+class TooltipEventHandler {
+
+  constructor(elem, tooltip, uuid) {
+
+    let self = this;
+
+    self.elem = elem;
+    self.tooltip = tooltip;
+    self.uuid = uuid;
+    self.clips = document.querySelectorAll('clip[data-ifuuid="' + uuid + '"]');
+
+    self.clips.forEach((clip) => {
+      clip.addEventListener('mouseenter', (e) => {
+        insightFactory.currentUUID = this.uuid;
+        document.querySelector('#ca-tooltip').setAttribute('data-show', '');
+      });
+    });
+
+  }
+
+}
+
+
 class SelectionUtils {
 
   static restoreSelection(range) {
@@ -59,16 +82,16 @@ class SelectionUtils {
       }
 
       if (s.length > 0) {
-        for (var i = 0; i < s.length; i++) {
+        for (var x = 0; x < s.length; x++) {
           var xs = document.createRange();
-          if (i) {
-            xs.setStartAfter(s[i - 1]);
-            xs.setEndAfter(s[i].lastChild);
+          if (x) {
+            xs.setStartAfter(s[x - 1]);
+            xs.setEndAfter(s[x].lastChild);
           } else {
-            xs.setStart(s[i], dangerous.startOffset);
+            xs.setStart(s[x], dangerous.startOffset);
             xs.setEndAfter(
-              (s[i].nodeType == Node.TEXT_NODE) ?
-              s[i] : s[i].lastChild
+              (s[x].nodeType == Node.TEXT_NODE) ?
+              s[x] : s[x].lastChild
             );
           }
           rs.push(xs);
@@ -82,22 +105,22 @@ class SelectionUtils {
     const re = new Array(0);
 
     if (dangerous.endContainer != ancestor) {
-      for (var i = dangerous.endContainer; i != ancestor; i = i.parentNode)
-        e.push(i);
+      for (var y = dangerous.endContainer; y != ancestor; y = y.parentNode)
+        e.push(y);
     }
 
     if (e.length > 0) {
-      for (var i = 0; i < e.length; i++) {
+      for (var z = 0; z < e.length; z++) {
         var xe = document.createRange();
-        if (i) {
-          xe.setStartBefore(e[i].firstChild);
-          xe.setEndBefore(e[i - 1]);
+        if (z) {
+          xe.setStartBefore(e[z].firstChild);
+          xe.setEndBefore(e[z - 1]);
         } else {
           xe.setStartBefore(
-            (e[i].nodeType == Node.TEXT_NODE) ?
-            e[i] : e[i].firstChild
+            (e[z].nodeType == Node.TEXT_NODE) ?
+            e[z] : e[z].firstChild
           );
-          xe.setEnd(e[i], dangerous.endOffset);
+          xe.setEnd(e[z], dangerous.endOffset);
         }
         re.unshift(xe);
       }
@@ -116,22 +139,20 @@ class SelectionUtils {
     rs.push(xm);
     return rs.concat(re);
 
-  };
+  }
 
-  static highlightRange(range, uuid) {
-
+  static clipRange(range, uuid) {
     if (range.toString() !== "" && range.toString().match(/\w+/g) !== null) {
       var newNode = document.createElement("clip");
-      newNode.setAttribute(
-        "style",
-        "background-color: mistyrose; display: inline;"
-      );
       newNode.setAttribute(
         "data-ifuuid",
         uuid
       );
       range.surroundContents(newNode);
     }
+  }
 
-  };
+  static highlightRange() {
+    $(('clip[data-ifuuid="' + insightFactory.currentUUID + '"]')).css('background-color', 'lavenderblush');
+  }
 }

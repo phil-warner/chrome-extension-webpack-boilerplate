@@ -1,6 +1,7 @@
 'use strict';
 
 const insightFactory = {};
+insightFactory.selections = [];
 
 let selectionEndTimeout = null;
 
@@ -27,12 +28,10 @@ const userSelectionChanged = function() {
   // wait 500 ms after the last selection change event
   if (selectionEndTimeout) {
     clearTimeout(selectionEndTimeout);
-    selectionEndTimeout = null;
-    return;
   }
   selectionEndTimeout = setTimeout(function() {
     $(window).trigger('selectionEnd');
-  }, 500);
+  }, 200);
 };
 
 
@@ -40,41 +39,54 @@ const selectionHandler = function(e) {
 
   const selection = document.getSelection();
 
-  if (selection.rangeCount > 0) {
+  if (!selection.isCollapsed) {
     // get the selected range
     const selectionRange = document.getSelection().getRangeAt(0);
-    insightFactory.safeRanges = SelectionUtils.getSafeRanges(selectionRange);
+    const safeRanges = SelectionUtils.getSafeRanges(selectionRange);
 
-    // const elem = selection.getRangeAt(0).startContainer.parentNode;
     const uuid = StringUtils.newUUID();
     insightFactory.uuid = uuid;
 
-    insightFactory.safeRanges.forEach((range) => {
-      SelectionUtils.highlightRange(range, uuid);
+    safeRanges.forEach((range) => {
+      SelectionUtils.clipRange(range, uuid);
     });
 
     // set up the toolbar
-    $('clip[data-ifuuid="' + uuid + '"]:first').toolbar({
-      content: '#toolbar-options',
-      position: 'top',
-      style: 'factory',
-      animate: 'standard',
-      event: 'hover',
-      adjustment: -10,
-      hideOnClick: true
-    }).trigger('mouseenter');
+    const clipRoot = document.querySelector('clip[data-ifuuid="' + uuid + '"]');
+    const tooltip = document.querySelector('#ca-tooltip');
 
-    //TODO check for pressed class before triggering mouseenter multiple times
+    // add event listeners to all the matching clip elements
+    new TooltipEventHandler(clipRoot, tooltip, uuid);
 
-
-    // set the current UUID when the toolbar is shown
-    $('[data-ifuuid="' + uuid + '"]:first').on('toolbarShown', function(event) {
-      insightFactory.currentUUID = uuid;
+    // create the tooltip
+    let popper = Popper.createPopper(clipRoot, tooltip, {
+      placement: 'top',
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [20, 15],
+          }
+        }
+      ]
     });
 
-    $('[data-ifuuid="' + uuid + '"]:first').on('toolbarItemClick', function(event) {
-      $('#toolbar-options').hide();
+    // trigger the tooltip the first time
+    const mouseenterEvent = new Event('mouseenter');
+    document.querySelector('clip').dispatchEvent(mouseenterEvent);
+
+    // save the selection
+    insightFactory.selections.push({
+      selection: selection,
+      uuid: uuid,
+      ranges: safeRanges,
+      popper: popper,
+      saved: false
     });
+
+    setTimeout(() => {
+      document.querySelector('#ca-tooltip').setAttribute('data-show','');
+    }, 250);
 
   }
 
@@ -82,18 +94,54 @@ const selectionHandler = function(e) {
 
 
 const appendToolbar = function() {
-  const causeicon = chrome.runtime.getURL('img/cause-logo.png');
-  const toolbar = '<div id="toolbar-options" class="hidden"><a class="clip"><img src="' + causeicon + '" alt="clip to insight factory" height="100%" /></a><a href="#"><i class="fa fa-file-text"></i></a><a href="#"><i class="fa fa-trash"></i></a></div>';
+
+  // add the toolbar to the DOM
+  const toolbar = `<div id="ca-tooltip" class="ca-tooltip" role="tooltip">
+      <a href="#" class="save-clip"><i class="fa fa-lg fa-share-alt"></i></a><a href="#" class="tag-clip"><i class="fa fa-lg fa-tag"></i></a><a href="#"><i class="fa fa-lg fa-trash"></i></a>
+      <div id="ca-arrow" class="ca-arrow" data-popper-arrow></div>
+    </div>`;
   $('body').append(toolbar);
 
   // toolbar button event handlers
-  $(document).on('click', 'a.clip', function(e) {
+  $(document).on('click', 'a.tag-clip', function(e) {
+    e.preventDefault();
+    SelectionUtils.highlightRange();
+    window.getSelection().empty();
     initTypeForm({
       target: '#clipper-modal-body',
-      title: 'Save clip',
+      title: 'Tag this clip',
       cliptype: 'clip'
     });
+
     $('#clipper-modal-trigger').click();
+  });
+
+  $(document).on('click', 'a.save-clip', function(e) {
+    e.preventDefault();
+    // highlight the range for this clip
+    SelectionUtils.highlightRange();
+    window.getSelection().empty();
+
+    //TODO - push this to the data layer
+
+    // mark this one as saved
+    const clip = insightFactory.selections.find((range) => {
+      return range.uuid = insightFactory.currentUUID;
+    });
+    if(clip) {
+      clip.saved = true;
+    }
+  });
+
+  // delete the clip
+  $(document).on('click', 'a.delete-clip', function(e) {
+    e.preventDefault();
+    const index = insightFactory.ranges.findIndex((range) => {
+      return range.uuid = insightFactory.currentUUID;
+    });
+    insightFactory.selections[index].popper.destroy();
+    insightFactory.selections.splice(index, 1);
+    //TODO - delete clip in the data store
   });
 };
 
@@ -135,22 +183,12 @@ const appendClipModal = function() {
 };
 
 
-/**
- * initialise extension
- */
+// init extension
 $(document).ready(function() {
 
   // init the toolbar
   appendToolbar();
   appendClipModal();
-
-  // selection event handler
-  $(window).bind('selectionEnd', function() {
-    selectionHandler();
-  });
-
-  // set up the initial selection changed event
-  document.onselectionchange = userSelectionChanged;
 
   // event listener - triggers bookmarking
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -161,6 +199,13 @@ $(document).ready(function() {
       });
       $('#clip-modal').modal('show');
     }
+  });
+
+  // selection event handler
+  $(document).on('mouseup', selectionHandler);
+
+  $(window).click(function() {
+    $('#ca-tooltip').removeAttr('data-show');
   });
 
 });

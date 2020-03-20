@@ -2,7 +2,6 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true,
     "jquery": true,
     "commonjs": true
   },
@@ -12,6 +11,9 @@
     "SharedArrayBuffer": "readonly",
     "StringUtils": true,
     "SelectionUtils": true,
+    "Popper": true,
+    "TooltipEventHandler": true,
+    "insightFactory": true,
     "chrome": true
   },
   "parserOptions": {
