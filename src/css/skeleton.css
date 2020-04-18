@@ -1,0 +1,515 @@
+/*
+* Skeleton V2.0.4
+* Copyright 2014, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 12/29/2014
+*/
+/* Table of contents
+––––––––––––––––––––––––––––––––––––––––––––––––––
+- Grid
+- Base Styles
+- Typography
+- Links
+- Buttons
+- Forms
+- Lists
+- Code
+- Tables
+- Spacing
+- Utilities
+- Clearing
+- Media Queries
+*/
+.ca-clipper {
+  /* Grid
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* For devices larger than 400px */
+  /* For devices larger than 550px */
+  /* Base Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* NOTE
+html is set to 62.5% so that all the REM measurements throughout Skeleton
+are based on 10px sizing. So basically 1.5rem = 15px :) */
+  /* Typography
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Larger than phablet */
+  /* Links
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Buttons
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Removes awkward default styles on some inputs for iOS */
+  /* Lists
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Code
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Tables
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Spacing
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Utilities
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Misc
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Clearing
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /* Self Clearing Goodness */
+  /* Media Queries
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+  /*
+Note: The best way to structure the use of media queries is to create the queries
+near the relevant code. For example, if you wanted to change the styles for buttons
+on small devices, paste the mobile query code up in the buttons section and style it
+there.
+*/
+  /* Larger than mobile */
+  /* Larger than phablet (also point when grid becomes active) */
+  /* Larger than tablet */
+  /* Larger than desktop */
+  /* Larger than Desktop HD */
+}
+.ca-clipper .container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.ca-clipper .column,
+.ca-clipper .columns {
+  width: 100%;
+  float: left;
+  box-sizing: border-box;
+}
+@media (min-width: 400px) {
+  .ca-clipper .container {
+    width: 85%;
+    padding: 0;
+  }
+}
+@media (min-width: 550px) {
+  .ca-clipper {
+    /* Offsets */
+  }
+  .ca-clipper .container {
+    width: 80%;
+  }
+  .ca-clipper .column,
+  .ca-clipper .columns {
+    margin-left: 4%;
+  }
+  .ca-clipper .column:first-child,
+  .ca-clipper .columns:first-child {
+    margin-left: 0;
+  }
+  .ca-clipper .one.column,
+  .ca-clipper .one.columns {
+    width: 4.66666667%;
+  }
+  .ca-clipper .two.columns {
+    width: 13.33333333%;
+  }
+  .ca-clipper .three.columns {
+    width: 22%;
+  }
+  .ca-clipper .four.columns {
+    width: 30.66666667%;
+  }
+  .ca-clipper .five.columns {
+    width: 39.33333333%;
+  }
+  .ca-clipper .six.columns {
+    width: 48%;
+  }
+  .ca-clipper .seven.columns {
+    width: 56.66666667%;
+  }
+  .ca-clipper .eight.columns {
+    width: 65.33333333%;
+  }
+  .ca-clipper .nine.columns {
+    width: 74%;
+  }
+  .ca-clipper .ten.columns {
+    width: 82.66666667%;
+  }
+  .ca-clipper .eleven.columns {
+    width: 91.33333333%;
+  }
+  .ca-clipper .twelve.columns {
+    width: 100%;
+    margin-left: 0;
+  }
+  .ca-clipper .one-third.column {
+    width: 30.66666667%;
+  }
+  .ca-clipper .two-thirds.column {
+    width: 65.33333333%;
+  }
+  .ca-clipper .one-half.column {
+    width: 48%;
+  }
+  .ca-clipper .offset-by-one.column,
+  .ca-clipper .offset-by-one.columns {
+    margin-left: 8.66666667%;
+  }
+  .ca-clipper .offset-by-two.column,
+  .ca-clipper .offset-by-two.columns {
+    margin-left: 17.33333333%;
+  }
+  .ca-clipper .offset-by-three.column,
+  .ca-clipper .offset-by-three.columns {
+    margin-left: 26%;
+  }
+  .ca-clipper .offset-by-four.column,
+  .ca-clipper .offset-by-four.columns {
+    margin-left: 34.66666667%;
+  }
+  .ca-clipper .offset-by-five.column,
+  .ca-clipper .offset-by-five.columns {
+    margin-left: 43.33333333%;
+  }
+  .ca-clipper .offset-by-six.column,
+  .ca-clipper .offset-by-six.columns {
+    margin-left: 52%;
+  }
+  .ca-clipper .offset-by-seven.column,
+  .ca-clipper .offset-by-seven.columns {
+    margin-left: 60.66666667%;
+  }
+  .ca-clipper .offset-by-eight.column,
+  .ca-clipper .offset-by-eight.columns {
+    margin-left: 69.33333333%;
+  }
+  .ca-clipper .offset-by-nine.column,
+  .ca-clipper .offset-by-nine.columns {
+    margin-left: 78%;
+  }
+  .ca-clipper .offset-by-ten.column,
+  .ca-clipper .offset-by-ten.columns {
+    margin-left: 86.66666667%;
+  }
+  .ca-clipper .offset-by-eleven.column,
+  .ca-clipper .offset-by-eleven.columns {
+    margin-left: 95.33333333%;
+  }
+  .ca-clipper .offset-by-one-third.column,
+  .ca-clipper .offset-by-one-third.columns {
+    margin-left: 34.66666667%;
+  }
+  .ca-clipper .offset-by-two-thirds.column,
+  .ca-clipper .offset-by-two-thirds.columns {
+    margin-left: 69.33333333%;
+  }
+  .ca-clipper .offset-by-one-half.column,
+  .ca-clipper .offset-by-one-half.columns {
+    margin-left: 52%;
+  }
+}
+.ca-clipper html {
+  font-size: 62.5%;
+}
+.ca-clipper body {
+  font-size: 1.5em;
+  /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  color: #222;
+}
+.ca-clipper h1,
+.ca-clipper h2,
+.ca-clipper h3,
+.ca-clipper h4,
+.ca-clipper h5,
+.ca-clipper h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+.ca-clipper h1 {
+  font-size: 4rem;
+  line-height: 1.2;
+  letter-spacing: -0.1rem;
+}
+.ca-clipper h2 {
+  font-size: 3.6rem;
+  line-height: 1.25;
+  letter-spacing: -0.1rem;
+}
+.ca-clipper h3 {
+  font-size: 3rem;
+  line-height: 1.3;
+  letter-spacing: -0.1rem;
+}
+.ca-clipper h4 {
+  font-size: 2.4rem;
+  line-height: 1.35;
+  letter-spacing: -0.08rem;
+}
+.ca-clipper h5 {
+  font-size: 1.8rem;
+  line-height: 1.5;
+  letter-spacing: -0.05rem;
+}
+.ca-clipper h6 {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+@media (min-width: 550px) {
+  .ca-clipper h1 {
+    font-size: 5rem;
+  }
+  .ca-clipper h2 {
+    font-size: 4.2rem;
+  }
+  .ca-clipper h3 {
+    font-size: 3.6rem;
+  }
+  .ca-clipper h4 {
+    font-size: 3rem;
+  }
+  .ca-clipper h5 {
+    font-size: 2.4rem;
+  }
+  .ca-clipper h6 {
+    font-size: 1.5rem;
+  }
+}
+.ca-clipper p {
+  margin-top: 0;
+}
+.ca-clipper a {
+  color: #1EAEDB;
+}
+.ca-clipper a:hover {
+  color: #0FA0CE;
+}
+.ca-clipper .button,
+.ca-clipper button,
+.ca-clipper input[type="submit"],
+.ca-clipper input[type="reset"],
+.ca-clipper input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.ca-clipper .button:hover,
+.ca-clipper button:hover,
+.ca-clipper input[type="submit"]:hover,
+.ca-clipper input[type="reset"]:hover,
+.ca-clipper input[type="button"]:hover,
+.ca-clipper .button:focus,
+.ca-clipper button:focus,
+.ca-clipper input[type="submit"]:focus,
+.ca-clipper input[type="reset"]:focus,
+.ca-clipper input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0;
+}
+.ca-clipper .button.button-primary,
+.ca-clipper button.button-primary,
+.ca-clipper input[type="submit"].button-primary,
+.ca-clipper input[type="reset"].button-primary,
+.ca-clipper input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0;
+}
+.ca-clipper .button.button-primary:hover,
+.ca-clipper button.button-primary:hover,
+.ca-clipper input[type="submit"].button-primary:hover,
+.ca-clipper input[type="reset"].button-primary:hover,
+.ca-clipper input[type="button"].button-primary:hover,
+.ca-clipper .button.button-primary:focus,
+.ca-clipper button.button-primary:focus,
+.ca-clipper input[type="submit"].button-primary:focus,
+.ca-clipper input[type="reset"].button-primary:focus,
+.ca-clipper input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB;
+}
+.ca-clipper input[type="email"],
+.ca-clipper input[type="number"],
+.ca-clipper input[type="search"],
+.ca-clipper input[type="text"],
+.ca-clipper input[type="tel"],
+.ca-clipper input[type="url"],
+.ca-clipper input[type="password"],
+.ca-clipper textarea,
+.ca-clipper select {
+  height: 38px;
+  padding: 6px 10px;
+  /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+.ca-clipper input[type="email"],
+.ca-clipper input[type="number"],
+.ca-clipper input[type="search"],
+.ca-clipper input[type="text"],
+.ca-clipper input[type="tel"],
+.ca-clipper input[type="url"],
+.ca-clipper input[type="password"],
+.ca-clipper textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.ca-clipper textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.ca-clipper input[type="email"]:focus,
+.ca-clipper input[type="number"]:focus,
+.ca-clipper input[type="search"]:focus,
+.ca-clipper input[type="text"]:focus,
+.ca-clipper input[type="tel"]:focus,
+.ca-clipper input[type="url"]:focus,
+.ca-clipper input[type="password"]:focus,
+.ca-clipper textarea:focus,
+.ca-clipper select:focus {
+  border: 1px solid #33C3F0;
+  outline: 0;
+}
+.ca-clipper label,
+.ca-clipper legend {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.ca-clipper fieldset {
+  padding: 0;
+  border-width: 0;
+}
+.ca-clipper input[type="checkbox"],
+.ca-clipper input[type="radio"] {
+  display: inline;
+}
+.ca-clipper label > .label-body {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
+.ca-clipper ul {
+  list-style: circle inside;
+}
+.ca-clipper ol {
+  list-style: decimal inside;
+}
+.ca-clipper ol,
+.ca-clipper ul {
+  padding-left: 0;
+  margin-top: 0;
+}
+.ca-clipper ul ul,
+.ca-clipper ul ol,
+.ca-clipper ol ol,
+.ca-clipper ol ul {
+  margin: 1.5rem 0 1.5rem 3rem;
+  font-size: 90%;
+}
+.ca-clipper li {
+  margin-bottom: 1rem;
+}
+.ca-clipper code {
+  padding: 0.2rem 0.5rem;
+  margin: 0 0.2rem;
+  font-size: 90%;
+  white-space: nowrap;
+  background: #F1F1F1;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
+}
+.ca-clipper pre > code {
+  display: block;
+  padding: 1rem 1.5rem;
+  white-space: pre;
+}
+.ca-clipper th,
+.ca-clipper td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1;
+}
+.ca-clipper th:first-child,
+.ca-clipper td:first-child {
+  padding-left: 0;
+}
+.ca-clipper th:last-child,
+.ca-clipper td:last-child {
+  padding-right: 0;
+}
+.ca-clipper button,
+.ca-clipper .button {
+  margin-bottom: 1rem;
+}
+.ca-clipper input,
+.ca-clipper textarea,
+.ca-clipper select,
+.ca-clipper fieldset {
+  margin-bottom: 1.5rem;
+}
+.ca-clipper pre,
+.ca-clipper blockquote,
+.ca-clipper dl,
+.ca-clipper figure,
+.ca-clipper table,
+.ca-clipper p,
+.ca-clipper ul,
+.ca-clipper ol,
+.ca-clipper form {
+  margin-bottom: 2.5rem;
+}
+.ca-clipper .u-full-width {
+  width: 100%;
+  box-sizing: border-box;
+}
+.ca-clipper .u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.ca-clipper .u-pull-right {
+  float: right;
+}
+.ca-clipper .u-pull-left {
+  float: left;
+}
+.ca-clipper hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid #E1E1E1;
+}
+.ca-clipper .container:after,
+.ca-clipper .row:after,
+.ca-clipper .u-cf {
+  content: "";
+  display: table;
+  clear: both;
+}

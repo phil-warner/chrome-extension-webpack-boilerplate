@@ -11,10 +11,12 @@
     "SharedArrayBuffer": "readonly",
     "StringUtils": true,
     "SelectionUtils": true,
+    "AuthUtils": true,
     "Popper": true,
     "TooltipEventHandler": true,
     "insightFactory": true,
-    "chrome": true
+    "chrome": true,
+    "autosize": true
   },
   "parserOptions": {
     "ecmaVersion": 2018,

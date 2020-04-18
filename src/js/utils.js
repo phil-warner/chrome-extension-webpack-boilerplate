@@ -33,18 +33,49 @@ class StringUtils {
 
 class TooltipEventHandler {
 
-  constructor(elem, tooltip, uuid) {
+  constructor(elem, tooltip, uuid, selection) {
 
     let self = this;
 
     self.elem = elem;
+    self.selection = selection;
     self.tooltip = tooltip;
     self.uuid = uuid;
     self.clips = document.querySelectorAll('clip[data-ifuuid="' + uuid + '"]');
 
     self.clips.forEach((clip) => {
       clip.addEventListener('mouseenter', (e) => {
-        insightFactory.currentUUID = this.uuid;
+
+        // check for authentication again
+        AuthUtils.getCookie();
+
+        insightFactory.currentUUID = self.uuid;
+        insightFactory.currentSelection = self.selection.toString();
+
+        // check to see if we've saved this clip yet
+        const clip = insightFactory.selections.find((selection) => {
+          return selection.uuid === self.uuid;
+        });
+
+        if(clip && clip.saved) {
+          $('.delete-clip').removeClass('disabled');
+        } else {
+          $('.delete-clip').addClass('disabled');
+        }
+
+        // create the tooltip
+        Popper.createPopper(elem, tooltip, {
+          placement: 'top',
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [20, 15],
+              }
+            }
+          ]
+        });
+
         document.querySelector('#ca-tooltip').setAttribute('data-show', '');
       });
     });
@@ -142,17 +173,73 @@ class SelectionUtils {
   }
 
   static clipRange(range, uuid) {
+
     if (range.toString() !== "" && range.toString().match(/\w+/g) !== null) {
       var newNode = document.createElement("clip");
       newNode.setAttribute(
         "data-ifuuid",
         uuid
       );
+      newNode.setAttribute(
+        "style",
+        "background-color: whitesmoke"
+      );
       range.surroundContents(newNode);
     }
   }
 
   static highlightRange() {
-    $(('clip[data-ifuuid="' + insightFactory.currentUUID + '"]')).css('background-color', 'lavenderblush');
+    $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').css('background-color', 'lavenderblush');
+    $('.delete-clip').removeClass('disabled');
   }
+
+  static unHighlightRange() {
+    $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').prop('style', '');
+    $('.delete-clip').addClass('disabled');
+  }
+}
+
+
+class AuthUtils {
+
+  static authenticated() {
+
+    $('#clipper-login-container').load('https://app.causeanalytics.com/private/img/transparent.gif', function (response, status, xhr) {
+      if(xhr.status === 200 ) {
+        insightFactory.isAuthenticated = true;
+      }
+    });
+  }
+
+  static getCookie() {
+    chrome.runtime.sendMessage({ cmd: 'get-cookie'}, function(response) {
+      insightFactory.isAuthenticated = response.authenticated;
+      if(response.authenticated && !insightFactory.profile) {
+        AuthUtils.getProfile();
+      }
+    });
+  }
+
+  static getProfile() {
+    chrome.runtime.sendMessage({ cmd: 'get-profile'}, function(response) {
+      insightFactory.profile = response;
+    });
+  }
+
+}
+
+class ApiUtils {
+
+  static getWorkspaces() {
+    chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(response) {
+      insightFactory.profile = response;
+    });
+  }
+
+  static getWorkflows(workspace) {
+    chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspace }, function(response) {
+      insightFactory.profile = response;
+    });
+  }
+
 }

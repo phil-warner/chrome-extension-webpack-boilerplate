@@ -4,7 +4,7 @@
   "options_page": "options.html",
   "version": "0.1",
   "background": {
-    "scripts": ["js/background.js"]
+    "scripts": ["js/jquery-3.4.1.min.js", "js/background.js"]
   },
   "browser_action": {
     "default_popup": "popup.html",
@@ -12,8 +12,8 @@
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "css": ["css/font-awesome.min.css", "css/animate.min.css", "css/custom.css"],
-    "js": ["js/jquery-3.4.1.min.js", "js/animated-modal.js", "js/popper.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
+    "css": ["css/normalize.css", "css/skeleton.css", "css/font-awesome-5.10.1.min.css", "css/themify-icons.css", "css/animate.min.css", "css/custom.css"],
+    "js": ["js/jquery-3.4.1.min.js", "js/animated-modal.js", "js/popper.min.js", "js/autosize.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
     "run_at": "document_end"
   }],
   "icons": {
@@ -24,14 +24,18 @@
     "html/*.html",
     "img/*.png",
     "css/*.css",
-    "fonts/FontAwesome.otf",
-    "fonts/fontawesome-webfont.eot",
-    "fonts/fontawesome-webfont.svg",
-    "fonts/fontawesome-webfont.ttf",
-    "fonts/fontawesome-webfont.woff",
-    "fonts/fontawesome-webfont.woff2"
+    "fonts/*.otf",
+    "fonts/*.eot",
+    "fonts/*.svg",
+    "fonts/*.ttf",
+    "fonts/*.woff",
+    "fonts/*.woff2",
+    "fonts/themify.eot",
+    "fonts/themify.svg",
+    "fonts/themify.ttf",
+    "fonts/themify.woff"
   ],
-  "permissions": ["tabs", "activeTab", "<all_urls>"],
+  "permissions": ["tabs", "cookies", "activeTab", "<all_urls>"],
   "manifest_version": 2,
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

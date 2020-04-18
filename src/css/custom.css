@@ -1,7 +1,7 @@
 /* brand styles */
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 
-body {
+body .ca-clipper {
   position: relative;
   font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -10,6 +10,10 @@ body {
   color: #555555;
   background: #fff;
   margin: 0;
+}
+
+.ca-clipper h3 {
+  color: #555555;
 }
 
 a {
@@ -27,6 +31,19 @@ a.disabled {
   opacity: .4;
 }
 
+/* layout styles */
+.ca-container {
+  margin-top: 30px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.ca-modal-container {
+  overflow: hidden;
+}
+
 /* popper.js styles */
 .ca-tooltip {
   background: #7A1D4A;
@@ -38,24 +55,28 @@ a.disabled {
   display: none;
 }
 
+.ca-tooltip a {
+  color: white !important
+}
+
 .ca-tooltip[data-show] {
   display: block;
 }
 
-.ca-tooltip[data-popper-placement^='top'] > #arrow {
-  bottom: -8px;
+.ca-tooltip[data-popper-placement^='top'] > #ca-arrow {
+  bottom: -4px;
 }
 
-.ca-tooltip[data-popper-placement^='bottom'] > #arrow {
-  top: -8px;
+.ca-tooltip[data-popper-placement^='bottom'] > #ca-arrow {
+  top: -4px;
 }
 
-.ca-tooltip[data-popper-placement^='left'] > #arrow {
-  right: -8px;
+.ca-tooltip[data-popper-placement^='left'] > #ca-arrow {
+  right: -4px;
 }
 
-.ca-tooltip[data-popper-placement^='right'] > #arrow {
-  left: -8px;
+.ca-tooltip[data-popper-placement^='right'] > #ca-arrow {
+  left: -4px;
 }
 
 .ca-tooltip a {
@@ -85,9 +106,10 @@ a.disabled {
 
 /* modal styles */
 .ca-clipper .clipper-header {
-  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
   -webkit-font-smoothing: antialiased;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 300;
   line-height: 22.4px;
   color: #555555;
 }
@@ -107,7 +129,43 @@ a.disabled {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* bootstrap overrides */
-.btn {
-  border-radius: 2px;
+.close-full-modal {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+/* popup css */
+.ca-popup-body {
+  width: 300px;
+  padding: 20px 5px;
+}
+ul.ca-actions {
+  padding-inline-start: 0;
+}
+ul.ca-actions li {
+  list-style-type: none;
+}
+ul.ca-actions li a {
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 22.4px;
+  color: #555555;
+}
+ul.ca-actions li a:hover {
+  color: #7A1D4A;
+  text-decoration: none;
+  font-weight: bolder;
+}
+.ca-label {
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: 'lightgray';
+  color: #555555;
+}
+
+/* skeleton overrides */
+.ca-clipper .button {
+  border-radius: 2px
 }
