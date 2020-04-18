@@ -94,7 +94,7 @@ const appendToolbar = function() {
 
   // add the toolbar to the DOM
   const toolbar = `<div id="ca-tooltip" class="ca-tooltip" role="tooltip">
-      <a href="#" class="save-clip"><i class="fas fa-highlighter"></i></a><a href="#" class="tag-clip"><i class="fa fa-tag"></i></a><a href="#" class="delete-clip disabled"><i class="fa fa-trash"></i></a>
+      <a href="#" class="save-clip"><i class="highlight-clip fas fa-highlighter"></i></a><a href="#" class="tag-clip"><i class="fa fa-tag"></i></a><a href="#" class="delete-clip disabled"><i class="fa fa-trash"></i></a>
       <div id="ca-arrow" class="ca-arrow" data-popper-arrow></div>
     </div>`;
   $('body').append(toolbar);
@@ -108,14 +108,14 @@ const appendToolbar = function() {
       // hide the tooltip - it will check authentication again for us when it's opened again
       $('#ca-tooltip').removeAttr('data-show');
       // trigger the login page in a new tab
-      chrome.runtime.sendMessage({ cmd: 'web-app-login'}, function(response) {
+      chrome.runtime.sendMessage({ cmd: 'web-app-login' }, function(response) {
         return;
       });
       return;
     }
 
     // highlight the range for this clip
-    SelectionUtils.highlightRange();
+    SelectionUtils.highlightRange('lavenderblush');
     const selection = window.getSelection();
 
     // mark this one as saved
@@ -123,9 +123,22 @@ const appendToolbar = function() {
       return s.uuid === insightFactory.currentUUID;
     });
     if(clip) {
+      console.log('got clip');
       clip.saved = true;
-      selection.empty();
-      $('#ca-tooltip').removeAttr('data-show');
+      // submit the clip
+      const clipData = {
+        content: insightFactory.currentSelection,
+        author: insightFactory.profile.email,
+        uid: insightFactory.currentUUID,
+        range: selection.getRangeAt(0),
+        type: 'clip',
+        url: window.location.href
+      };
+      chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+        console.log(response);
+        $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('fast');
+        selection.empty();
+      });
     }
   });
 
@@ -244,6 +257,14 @@ $(document).ready(function() {
   // click handler to remove tooltip when user clicks away
   $(window).click(function() {
     $('#ca-tooltip').removeAttr('data-show');
+    const clip = insightFactory.selections.find((selection) => {
+      return selection.uuid === insightFactory.currentUUID;
+    });
+
+    // remove the highlighting is this is unsaved - it's just an affordance helper
+    if(!clip || !clip.saved) {
+      SelectionUtils.unHighlightRange();
+    }
   });
 
   // submit the note

@@ -18,11 +18,10 @@ const getWorkflows = function(workspace, sendResponse) {
 
 const submitClip = function(clipdata, sendResponse) {
 
-  fetch('https://api.causeanalytics.com', {
+  fetch('https://api.causeanalytics.com/clips', {
     method: 'POST',
     mode: 'cors',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTU4NjQyNjQyNiwiZXhwIjoxNTg5MDE4NDI2fQ.ZZ8QUSIDalRXIapTb3mEk7BJeJ5o9jHuAJFYvac60LA'
     },
     body: JSON.stringify(clipdata)

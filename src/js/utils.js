@@ -58,9 +58,12 @@ class TooltipEventHandler {
         });
 
         if(clip && clip.saved) {
+          $('.highlight-clip').removeClass('fa-highlighter').addClass('fa-check-circle');
           $('.delete-clip').removeClass('disabled');
         } else {
+          $('.highlight-clip').removeClass('fa-circle-check').addClass('fa-highlighter');
           $('.delete-clip').addClass('disabled');
+          SelectionUtils.highlightRange('whitesmoke');
         }
 
         // create the tooltip
@@ -78,6 +81,19 @@ class TooltipEventHandler {
 
         document.querySelector('#ca-tooltip').setAttribute('data-show', '');
       });
+
+      clip.addEventListener('mouseleave', (e) => {
+        // check to see if we've saved this clip yet
+        const clip = insightFactory.selections.find((selection) => {
+          return selection.uuid === self.uuid;
+        });
+
+        // remove the highlighting is this is unsaved - it's just an affordance helper
+        if((!clip || !clip.saved) && !document.querySelector('#ca-tooltip').hasAttribute('data-show')) {
+          SelectionUtils.unHighlightRange();
+        }
+      });
+
     });
 
   }
@@ -180,22 +196,20 @@ class SelectionUtils {
         "data-ifuuid",
         uuid
       );
-      newNode.setAttribute(
+      /*newNode.setAttribute(
         "style",
         "background-color: whitesmoke"
-      );
+      );*/
       range.surroundContents(newNode);
     }
   }
 
-  static highlightRange() {
-    $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').css('background-color', 'lavenderblush');
-    $('.delete-clip').removeClass('disabled');
+  static highlightRange(color) {
+    $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').css('background-color', color);
   }
 
   static unHighlightRange() {
     $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').prop('style', '');
-    $('.delete-clip').addClass('disabled');
   }
 }
 
@@ -212,7 +226,7 @@ class AuthUtils {
   }
 
   static getCookie() {
-    chrome.runtime.sendMessage({ cmd: 'get-cookie'}, function(response) {
+    chrome.runtime.sendMessage({ cmd: 'get-cookie' }, function(response) {
       insightFactory.isAuthenticated = response.authenticated;
       if(response.authenticated && !insightFactory.profile) {
         AuthUtils.getProfile();
@@ -221,7 +235,7 @@ class AuthUtils {
   }
 
   static getProfile() {
-    chrome.runtime.sendMessage({ cmd: 'get-profile'}, function(response) {
+    chrome.runtime.sendMessage({ cmd: 'get-profile' }, function(response) {
       insightFactory.profile = response;
     });
   }

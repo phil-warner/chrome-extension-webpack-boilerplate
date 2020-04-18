@@ -105,12 +105,13 @@ a.disabled {
 
 
 /* modal styles */
-.ca-clipper .clipper-header {
-  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
+.ca-clipper h4.clipper-header {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif !important;
   -webkit-font-smoothing: antialiased;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 300;
   line-height: 22.4px;
+  letter-spacing: inherit;
   color: #555555;
 }
 
@@ -168,4 +169,12 @@ ul.ca-actions li a:hover {
 /* skeleton overrides */
 .ca-clipper .button {
   border-radius: 2px
+}
+
+.pull-left {
+  float: left
+}
+
+.pull-right {
+  float: right
 }
