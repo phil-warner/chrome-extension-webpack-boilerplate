@@ -31,69 +31,19 @@ class StringUtils {
 }
 
 
-class TooltipEventHandler {
+class Tooltip {
 
   constructor(elem, tooltip, uuid, selection) {
 
-    let self = this;
+    this.elem = elem;
+    this.selection = selection;
+    this.tooltip = tooltip;
+    this.uuid = uuid;
+    this.clips = document.querySelectorAll('clip[data-ifuuid="' + uuid + '"]');
 
-    self.elem = elem;
-    self.selection = selection;
-    self.tooltip = tooltip;
-    self.uuid = uuid;
-    self.clips = document.querySelectorAll('clip[data-ifuuid="' + uuid + '"]');
-
-    self.clips.forEach((clip) => {
-      clip.addEventListener('mouseenter', (e) => {
-
-        // check for authentication again
-        AuthUtils.getCookie();
-
-        insightFactory.currentUUID = self.uuid;
-        insightFactory.currentSelection = self.selection.toString();
-
-        // check to see if we've saved this clip yet
-        const clip = insightFactory.selections.find((selection) => {
-          return selection.uuid === self.uuid;
-        });
-
-        if(clip && clip.saved) {
-          $('.highlight-clip').removeClass('fa-highlighter').addClass('fa-check-circle');
-          $('.delete-clip').removeClass('disabled');
-        } else {
-          $('.highlight-clip').removeClass('fa-circle-check').addClass('fa-highlighter');
-          $('.delete-clip').addClass('disabled');
-          SelectionUtils.highlightRange('whitesmoke');
-        }
-
-        // create the tooltip
-        Popper.createPopper(elem, tooltip, {
-          placement: 'top',
-          modifiers: [
-            {
-              name: 'offset',
-              options: {
-                offset: [20, 15],
-              }
-            }
-          ]
-        });
-
-        document.querySelector('#ca-tooltip').setAttribute('data-show', '');
-      });
-
-      clip.addEventListener('mouseleave', (e) => {
-        // check to see if we've saved this clip yet
-        const clip = insightFactory.selections.find((selection) => {
-          return selection.uuid === self.uuid;
-        });
-
-        // remove the highlighting is this is unsaved - it's just an affordance helper
-        if((!clip || !clip.saved) && !document.querySelector('#ca-tooltip').hasAttribute('data-show')) {
-          SelectionUtils.unHighlightRange();
-        }
-      });
-
+    this.clips.forEach((clip) => {
+      clip.addEventListener('mouseenter', insightFactory.renderPopper);
+      clip.addEventListener('mouseleave', insightFactory.removePopper);
     });
 
   }
@@ -211,6 +161,27 @@ class SelectionUtils {
   static unHighlightRange() {
     $('clip[data-ifuuid="' + insightFactory.currentUUID + '"]').prop('style', '');
   }
+
+  static removeEventListeners() {
+
+    const unsaved = insightFactory.selections.filter((selection) => {
+      return !selection.saved;
+    });
+
+    if(unsaved.length < 1) { return; }
+
+    unsaved.forEach((item) => {
+      const elems = document.querySelectorAll('clip[data-ifuuid="' + item.uuid + '"]');
+      if(elems.length > 0) {
+        elems.forEach((elem) => {
+          elem.removeEventListener('mouseenter', insightFactory.renderPopper);
+          elem.removeEventListener('mouseleave', insightFactory.removePopper);
+        });
+      }
+    });
+
+  }
+
 }
 
 

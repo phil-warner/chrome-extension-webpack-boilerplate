@@ -2,8 +2,65 @@
 
 const insightFactory = {};
 insightFactory.formid = 'W5UkZw';
+insightFactory.workflowid = '5e9c1ffccc5f70749996c152';
 insightFactory.selections = [];
 insightFactory.isAuthenticated = false;
+insightFactory.currentWorkspace = '5e9c2019cc5f70749996c153';
+insightFactory.renderPopper = (e) => {
+
+  // check for authentication again
+  AuthUtils.getCookie();
+
+  const uuid = $(e.target).data('ifuuid');
+  insightFactory.currentUUID = uuid;
+
+  // check to see if we've saved this clip yet
+  const clip = insightFactory.selections.find((selection) => {
+    return selection.uuid === uuid;
+  });
+
+  const $highlight = $('.highlight-clip');
+  const $delete = $('.delete-clip');
+
+  if(clip && clip.saved) {
+    $highlight.removeClass('fa-highlighter').addClass('fa-check-circle');
+    $delete.removeClass('disabled');
+  } else {
+    $highlight.removeClass('fa-circle-check').addClass('fa-highlighter');
+    $delete.addClass('disabled');
+    // SelectionUtils.highlightRange('whitesmoke');
+  }
+
+  // create the tooltip
+  const elem = document.querySelector('clip[data-ifuuid="' + uuid + '"]');
+  const tooltip = document.querySelector('#ca-tooltip');
+  Popper.createPopper(elem, tooltip, {
+    placement: 'top',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [20, 15],
+        }
+      }
+    ]
+  });
+
+  document.querySelector('#ca-tooltip').setAttribute('data-show', '');
+};
+
+insightFactory.removePopper = (e) => {
+  const uuid = $(this).data('ifuuid');
+  // check to see if we've saved this clip yet
+  const clip = insightFactory.selections.find((selection) => {
+    return selection.uuid === uuid;
+  });
+
+  // remove the highlighting is this is unsaved - it's just an affordance helper
+  if((!clip || !clip.saved) && !document.querySelector('#ca-tooltip').hasAttribute('data-show')) {
+    SelectionUtils.unHighlightRange();
+  }
+}
 
 const initTypeForm = function(options) {
 
@@ -12,24 +69,29 @@ const initTypeForm = function(options) {
 
   // load the typeform
   const embedElement = document.querySelector(options.target);
-  window.typeformEmbed.makeWidget(embedElement, 'https://causeanalytics.typeform.com/to/' + insightFactory.formid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + window.location.href + '&cliptype=' + options.cliptype + '&note=' + options.note, {
+  const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
+  const typeformUrl = 'https://causeanalytics.typeform.com/to/' + insightFactory.formid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + insightFactory.workflowid + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+
+  window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
     hideFooter: true,
     hideHeaders: true,
     opacity: 0,
     onSubmit: () => {
-      // submit the clip
-      const clipData = {
-        content: insightFactory.currentSelection,
-        author: insightFactory.profile.email,
-        uid: insightFactory.currentUUID,
-        range: insightFactory.selections[insightFactory.currentUUID].range,
-        type: options.cliptype,
-        url: window.location.href
-      };
-      chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-        return;
-      });
-
+      if(options.cliptype === 'clip') {
+        // submit the clip
+        const clipData = {
+          content: insightFactory.currentSelection,
+          member: insightFactory.profile.memberid,
+          uid: insightFactory.currentUUID,
+          ranges: insightFactory.selections[insightFactory.currentUUID].ranges,
+          type: options.cliptype,
+          url: window.location.href,
+          workspace: insightFactory.currentWorkspace
+        };
+        chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+          return;
+        });
+      }
       // close the modal
       $('.close-cause-clipper-modal').click();
     }
@@ -65,13 +127,14 @@ const selectionHandler = function(e) {
     const tooltip = document.querySelector('#ca-tooltip');
 
     // add event listeners to all the matching clip elements
-    new TooltipEventHandler(clipRoot, tooltip, uuid, selection);
+    new Tooltip(clipRoot, tooltip, uuid, selection);
 
     // trigger the tooltip the first time
     insightFactory.currentUUID = uuid;
     insightFactory.currentSelection = selection.toString();
     const mouseenterEvent = new Event('mouseenter');
-    document.querySelector('clip').dispatchEvent(mouseenterEvent);
+    // document.querySelector(clipSelector).dispatchEvent(mouseenterEvent);
+    clipRoot.dispatchEvent(mouseenterEvent);
 
     // save the selection
     insightFactory.selections.push({
@@ -94,7 +157,7 @@ const appendToolbar = function() {
 
   // add the toolbar to the DOM
   const toolbar = `<div id="ca-tooltip" class="ca-tooltip" role="tooltip">
-      <a href="#" class="save-clip"><i class="highlight-clip fas fa-highlighter"></i></a><a href="#" class="tag-clip"><i class="fa fa-tag"></i></a><a href="#" class="delete-clip disabled"><i class="fa fa-trash"></i></a>
+      <a href="#" class="save-clip"><i class="ca-action highlight-clip fas fa-highlighter"></i></a><a href="#" class="tag-clip"><i class="ca-action fa fa-tag"></i></a><a href="#" class="delete-clip disabled"><i class="ca-action fa fa-trash"></i></a>
       <div id="ca-arrow" class="ca-arrow" data-popper-arrow></div>
     </div>`;
   $('body').append(toolbar);
@@ -118,25 +181,31 @@ const appendToolbar = function() {
     SelectionUtils.highlightRange('lavenderblush');
     const selection = window.getSelection();
 
+    const clips = document.querySelectorAll('clip[data-ifuuid="' + insightFactory.currentUUID + '"]');
+    clips.forEach((clip) => {
+      clip.addEventListener('mouseenter', insightFactory.renderPopper);
+      clip.addEventListener('mouseleave', insightFactory.removePopper);
+    });
+
     // mark this one as saved
     const clip = insightFactory.selections.find((s) => {
       return s.uuid === insightFactory.currentUUID;
     });
     if(clip) {
-      console.log('got clip');
       clip.saved = true;
       // submit the clip
       const clipData = {
         content: insightFactory.currentSelection,
-        author: insightFactory.profile.email,
+        member: insightFactory.profile.memberid,
         uid: insightFactory.currentUUID,
-        range: selection.getRangeAt(0),
+        ranges: selection.getRangeAt(0),
         type: 'clip',
-        url: window.location.href
+        url: window.location.href,
+        workspace: insightFactory.currentWorkspace
       };
       chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-        console.log(response);
-        $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('fast');
+        $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
+        $('.delete-clip').removeClass('disabled');
         selection.empty();
       });
     }
@@ -174,7 +243,14 @@ const appendToolbar = function() {
       return selection.uuid = insightFactory.currentUUID;
     });
     insightFactory.selections.splice(index, 1);
+    $('.highlight-clip').hide().removeClass('fa-check-circle').addClass('fa-highlighter').fadeIn('slow');
+    $('.delete-clip').addClass('disabled');
 
+    const clips = document.querySelectorAll('clip[data-ifuuid="' + insightFactory.currentUUID + '"]');
+    clips.forEach((clip) => {
+      clip.removeEventListener('mouseenter', insightFactory.renderPopper);
+      clip.removeEventListener('mouseleave', insightFactory.removePopper);
+    });
     //TODO - delete clip in the data store
   });
 };
@@ -247,15 +323,20 @@ $(document).ready(function() {
         note: 'true'
       });
       $('#clipper-modal-trigger').click();
-
     }
   });
 
   // selection event handler
   $(document).on('mouseup', selectionHandler);
 
-  // click handler to remove tooltip when user clicks away
-  $(window).click(function() {
+  // click handler to remove tooltip and unsaved clips when user clicks away
+  $(window).click(function(e) {
+
+    // don't close the tooltip if that is what is being clicked, or if
+    if($(e.target).hasClass('ca-action')) {
+      return;
+    }
+
     $('#ca-tooltip').removeAttr('data-show');
     const clip = insightFactory.selections.find((selection) => {
       return selection.uuid === insightFactory.currentUUID;
@@ -264,6 +345,7 @@ $(document).ready(function() {
     // remove the highlighting is this is unsaved - it's just an affordance helper
     if(!clip || !clip.saved) {
       SelectionUtils.unHighlightRange();
+      SelectionUtils.removeEventListeners();
     }
   });
 

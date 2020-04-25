@@ -17,7 +17,6 @@ const getWorkflows = function(workspace, sendResponse) {
 };
 
 const submitClip = function(clipdata, sendResponse) {
-
   fetch('https://api.causeanalytics.com/clips', {
     method: 'POST',
     mode: 'cors',
@@ -32,7 +31,6 @@ const submitClip = function(clipdata, sendResponse) {
   .then(function(result) {
     sendResponse(result);
   });
-
 };
 
 // extension background event handler
