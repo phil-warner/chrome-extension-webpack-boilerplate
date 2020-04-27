@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Cause Analytics Clipper</title>
-  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/skeleton.css" rel="stylesheet">
   <link href="css/animate.min.css" rel="stylesheet">
   <link href="css/themify-icons.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
@@ -13,18 +13,44 @@
 
 <body class="ca-popup-body">
   <div class="container">
-    <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-12 mb-4 sm-hidden">
-        <ul class="ca-actions">
-          <li><span class="ca-label ti-bookmark">&nbsp;</span><a href="#" class="ca-bookmark-page">Bookmark Page</a></li>
-          <li><span class="ca-label ti-write">&nbsp;</span><a href="#" class="ca-note">Take a Note</a></li>
-        </ul>
+    <!-- ko ifnot: isLoggedIn -->
+      <input class="button-primary" type="button" value="Log in" />
+    <!-- /ko -->
+    <!-- ko if: isLoggedIn -->
+      <div class="row">
+        <label for="workspaces">Select workspace</label>
+        <select class="u-full-width" id="workspaces" data-bind="template: workspace-option, foreach: workspaces">
+        </select>
+        <hr>
       </div>
-    </div>
+      <div class="row">
+        <label for="workspaces">Select workflow</label>
+        <select class="u-full-width" id="workflows" data-bind="template: workflow-option, foreach: workflows">
+        </select>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4 sm-hidden">
+          <ul class="ca-actions">
+            <li><span class="ca-label ti-bookmark">&nbsp;</span><a href="#" class="ca-bookmark-page">Bookmark Page</a></li>
+            <li><span class="ca-label ti-write">&nbsp;</span><a href="#" class="ca-note">Take a Note</a></li>
+          </ul>
+        </div>
+      </div>
+    <!-- /ko -->
   </div>
 
   <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+  <script type="text/javascript" src="js/knockout-3.5.1.js"></script>
   <script type="text/javascript" src="js/popup.js"></script>
+
+  <!-- knockout templates -->
+  <script type="text/html" id="workspace-option">
+    <option data-bind="attr: { value: id }, text: title, click: getWorkflows"></option>
+  </script>
+  <script type="text/html" id="workflow-option">
+    <option data-bind="attr: { value: id }, text: title, click: setWorkflow"></option>
+  </script>
 </body>
 
 </html>

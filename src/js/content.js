@@ -6,6 +6,8 @@ insightFactory.workflowid = '5e9c1ffccc5f70749996c152';
 insightFactory.selections = [];
 insightFactory.isAuthenticated = false;
 insightFactory.currentWorkspace = '5e9c2019cc5f70749996c153';
+
+// popper utility functions
 insightFactory.renderPopper = (e) => {
 
   // check for authentication again
@@ -28,7 +30,6 @@ insightFactory.renderPopper = (e) => {
   } else {
     $highlight.removeClass('fa-circle-check').addClass('fa-highlighter');
     $delete.addClass('disabled');
-    // SelectionUtils.highlightRange('whitesmoke');
   }
 
   // create the tooltip
@@ -256,7 +257,7 @@ const appendToolbar = function() {
 };
 
 
-const appendClipModal = function() {
+const appendClipperModal = function() {
 
   // add the custom element and namespace our css
   const clipperModal = document.createElement("ca-clipper-modal");
@@ -301,7 +302,7 @@ $(document).ready(function() {
 
   // init the toolbar
   appendToolbar();
-  appendClipModal();
+  appendClipperModal();
 
   // external event listeners
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -347,11 +348,6 @@ $(document).ready(function() {
       SelectionUtils.unHighlightRange();
       SelectionUtils.removeEventListeners();
     }
-  });
-
-  // submit the note
-  $(document).on('click', '#submit-note', function() {
-    $('#clipper-modal-body').hide().html('<h3>Note saved!</h3>').fadeIn('fast');
   });
 
 });

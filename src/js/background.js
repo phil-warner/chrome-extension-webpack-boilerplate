@@ -1,27 +1,18 @@
+const STRAPI_TOKEN =  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTU4NjQyNjQyNiwiZXhwIjoxNTg5MDE4NDI2fQ.ZZ8QUSIDalRXIapTb3mEk7BJeJ5o9jHuAJFYvac60LA';
+
 const getProfile = function(sendResponse) {
   $.get('https://app.causeanalytics.com/api/user', function(data){
     sendResponse(data);
   });
 };
 
+
 const getWorkspaces = function(email, sendResponse) {
-  $.get('https://api.causeanalytics.com/workspaces?email=' + email, function(data){
-    sendResponse(data);
-  });
-};
-
-const getWorkflows = function(workspace, sendResponse) {
-  $.get('https://api.causeanalytics.com/workflows?workspace=' + workspace, function(data){
-    sendResponse(data);
-  });
-};
-
-const submitClip = function(clipdata, sendResponse) {
-  fetch('https://api.causeanalytics.com/clips', {
-    method: 'POST',
+  fetch('https://api.causeanalytics.com/members?email=' + email, {
+    method: 'GET',
     mode: 'cors',
     headers: {
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTU4NjQyNjQyNiwiZXhwIjoxNTg5MDE4NDI2fQ.ZZ8QUSIDalRXIapTb3mEk7BJeJ5o9jHuAJFYvac60LA'
+      'Authorization': STRAPI_TOKEN
     },
     body: JSON.stringify(clipdata)
   })
@@ -32,6 +23,43 @@ const submitClip = function(clipdata, sendResponse) {
     sendResponse(result);
   });
 };
+
+
+const getWorkflows = function(workspace, sendResponse) {
+  fetch('https://api.causeanalytics.com/workspaces?name=' + workspace, {
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+      'Authorization': STRAPI_TOKEN
+    },
+    body: JSON.stringify(clipdata)
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(result) {
+    sendResponse(result);
+  });
+};
+
+
+const submitClip = function(clipdata, sendResponse) {
+  fetch('https://api.causeanalytics.com/clips', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Authorization': STRAPI_TOKEN
+    },
+    body: JSON.stringify(clipdata)
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(result) {
+    sendResponse(result);
+  });
+};
+
 
 // extension background event handler
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -63,19 +91,3 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       return true;
     }
 });
-
-// const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTU4NjQyNjQyNiwiZXhwIjoxNTg5MDE4NDI2fQ.ZZ8QUSIDalRXIapTb3mEk7BJeJ5o9jHuAJFYvac60LA';
-
-/*$.get('http://localhost:1337/posts', {
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
-  })
-  .then(response => {
-    // Handle success.
-    console.log('Data: ', response.data);
-  })
-  .catch(error => {
-    // Handle error.
-    console.log('An error occurred:', error);
-  });*/
