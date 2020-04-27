@@ -57,58 +57,58 @@ const SettingsModel = function() {
   self.workspaces = ko.observableArray();
   self.workflows = ko.observableArray();
   self.isAuthenticated = ko.observable(false);
-
+  self.selectedWorkspace = ko.observable();
+  self.selectedWorkflow = ko.observable();
 
   self.getWorkspaces = () => {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: true
-    }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { 'message': 'get-workspaces', 'email': insightFactory.profile.email }, (response) => {
-        const mappedWorkspaces = response.workspaces.map((workspace) => {
-          return new Workspace(workspace);
-        });
-        self.workspaces(mappedWorkspaces);
-        self.getWorkflows(mappedWorkspaces[0].name);
+    chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(response) {
+      if(!response.workspaces) { return; }
+      const mappedWorkspaces = response.workspaces.map((workspace) => {
+        return new Workspace(workspace);
       });
+      self.workspaces(mappedWorkspaces);
+      self.getWorkflows(mappedWorkspaces[0].name);
     });
   };
 
-  self.getWorkflows = (workspace) => {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: true
-    }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { 'message': 'get-workfows', 'workspace': workspace }, (response) => {
-        const mappedWorkflows = response.workflows.map((workflow) => {
-          return new Workflow(workflow);
-        });
-        self.workflows(mappedWorkflows);
-        $('#popup-loader').hide();
-        $('#popup-content').fadeIn('fast');
+  self.getWorkflows = () => {
+    chrome.runtime.sendMessage({ cmd: 'get-workfows', 'workspace': self.selectedWorkspace().name }, function(response) {
+      const mappedWorkflows = response.workflows.map((workflow) => {
+        return new Workflow(workflow);
       });
+      self.workflows(mappedWorkflows);
+      $('#popup-loader').hide();
+      $('#popup-content').fadeIn('fast');
     });
+  };
+
+  self.setWorkflow = (workflow) => {
+    chrome.runtime.sendMessage({ cmd: 'set-workfow', 'workflow': workflow });
   };
 
   self.checkLogin = () => {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: true
-    }, async function(tabs) {
-      const response = await chrome.tabs.sendMessage(tabs[0].id, { 'message': 'check-login' });
-      if(response.isAuthenticated){
+    chrome.runtime.sendMessage({ cmd: 'get-cookie' }, function(response) {
+      if(response.authenticated){
         self.isAuthenticated(true);
         self.getWorkspaces();
       }
     });
   };
 
-  self.checkLogin();
+  // self.checkLogin();
+  if(insightFactory.isAuthenticated) {
+    self.isAuthenticated(true);
+    self.getWorkspaces();
+  }
 
 };
 
 
-$(document).ready(function() {
+//$(document).ready(function() {
+window.onload = function() {
+
+  // check login
+  AuthUtils.getCookie();
 
   // initialize popup
 	const settingsModel = new SettingsModel();
@@ -119,4 +119,4 @@ $(document).ready(function() {
   $(document).on('click', '.ca-bookmark-page', bookmark);
   $(document).on('click', '.ca-note', note);
 
-});
+};

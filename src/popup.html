@@ -11,7 +11,7 @@
   <link href="css/custom.css" rel="stylesheet">
 </head>
 
-<body class="ca-popup-body">
+<body class="ca-clipper">
   <div class="container">
     <!-- ko ifnot: isAuthenticated -->
       <input class="button-primary" id="authenticate" type="button" value="Log in" />
@@ -21,13 +21,13 @@
       <div id="popup-content" style="display: none">
         <div class="row">
           <label for="workspaces">Select workspace</label>
-          <select class="u-full-width" id="workspaces" data-bind="template: workspace-option, foreach: workspaces">
+          <select class="u-full-width" id="workspaces" data-bind="options: workspaces, value: selectedWorkspace, optionsText: name">
           </select>
           <hr>
         </div>
         <div class="row">
           <label for="workspaces">Select workflow</label>
-          <select class="u-full-width" id="workflows" data-bind="template: workflow-option, foreach: workflows">
+          <select class="u-full-width" id="workflows" data-bind="options: workflows, value: selectedWorkflow, optionsText: name">
           </select>
           <hr>
         </div>
@@ -49,10 +49,10 @@
 
   <!-- knockout templates -->
   <script type="text/html" id="workspace-option">
-    <option data-bind="attr: { value: id }, text: title, click: getWorkflows"></option>
+    <option data-bind="value: id, text: name, click: getWorkflows"></option>
   </script>
   <script type="text/html" id="workflow-option">
-    <option data-bind="attr: { value: id }, text: title, click: setWorkflow"></option>
+    <option data-bind="value: id, text: name, click: setWorkflow"></option>
   </script>
 </body>
 

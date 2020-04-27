@@ -187,15 +187,6 @@ class SelectionUtils {
 
 class AuthUtils {
 
-  static authenticated() {
-
-    $('#clipper-login-container').load('https://app.causeanalytics.com/private/img/transparent.gif', function (response, status, xhr) {
-      if(xhr.status === 200 ) {
-        insightFactory.isAuthenticated = true;
-      }
-    });
-  }
-
   static getCookie() {
     chrome.runtime.sendMessage({ cmd: 'get-cookie' }, function(response) {
       insightFactory.isAuthenticated = response.authenticated;

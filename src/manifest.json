@@ -13,7 +13,7 @@
   "content_scripts": [{
     "matches": ["<all_urls>"],
     "css": ["css/normalize.css", "css/skeleton.css", "css/font-awesome-5.10.1.min.css", "css/themify-icons.css", "css/animate.min.css", "css/custom.css"],
-    "js": ["js/jquery-3.4.1.min.js", "js/knockout-3.5.1.js", "js/animated-modal.js", "js/popper.min.js", "js/autosize.min.js", "js/utils.js", "js/embed.js", "js/content.js"],
+    "js": ["js/jquery-3.4.1.min.js", "js/knockout-3.5.1.js", "js/animated-modal.js", "js/popper.min.js", "js/autosize.min.js", "js/utils.js", "js/embed.js", "js/popup.js", "js/content.js"],
     "run_at": "document_end"
   }],
   "icons": {

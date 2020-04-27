@@ -324,6 +324,9 @@ $(document).ready(function() {
         note: 'true'
       });
       $('#clipper-modal-trigger').click();
+    } else if (request.message === 'set-workflow') {
+      insightFactory.formid = request.formid;
+      insightFactory.workflowid = request.workflowid;
     }
   });
 
