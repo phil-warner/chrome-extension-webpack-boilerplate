@@ -13,28 +13,31 @@
 
 <body class="ca-popup-body">
   <div class="container">
-    <!-- ko ifnot: isLoggedIn -->
-      <input class="button-primary" type="button" value="Log in" />
+    <!-- ko ifnot: isAuthenticated -->
+      <input class="button-primary" id="authenticate" type="button" value="Log in" />
     <!-- /ko -->
-    <!-- ko if: isLoggedIn -->
-      <div class="row">
-        <label for="workspaces">Select workspace</label>
-        <select class="u-full-width" id="workspaces" data-bind="template: workspace-option, foreach: workspaces">
-        </select>
-        <hr>
-      </div>
-      <div class="row">
-        <label for="workspaces">Select workflow</label>
-        <select class="u-full-width" id="workflows" data-bind="template: workflow-option, foreach: workflows">
-        </select>
-        <hr>
-      </div>
-      <div class="row">
-        <div class="col-lg-4 col-md-6 col-sm-12 mb-4 sm-hidden">
-          <ul class="ca-actions">
-            <li><span class="ca-label ti-bookmark">&nbsp;</span><a href="#" class="ca-bookmark-page">Bookmark Page</a></li>
-            <li><span class="ca-label ti-write">&nbsp;</span><a href="#" class="ca-note">Take a Note</a></li>
-          </ul>
+    <!-- ko if: isAuthenticated -->
+      <div id="popup-loader" class="text-center"><i class="fas fa-book-open fa-pulse"></i></div>
+      <div id="popup-content" style="display: none">
+        <div class="row">
+          <label for="workspaces">Select workspace</label>
+          <select class="u-full-width" id="workspaces" data-bind="template: workspace-option, foreach: workspaces">
+          </select>
+          <hr>
+        </div>
+        <div class="row">
+          <label for="workspaces">Select workflow</label>
+          <select class="u-full-width" id="workflows" data-bind="template: workflow-option, foreach: workflows">
+          </select>
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-sm-12 mb-4 sm-hidden">
+            <ul class="ca-actions">
+              <li><span class="ca-label ti-bookmark">&nbsp;</span><a href="#" class="ca-bookmark-page">Bookmark Page</a></li>
+              <li><span class="ca-label ti-write">&nbsp;</span><a href="#" class="ca-note">Take a Note</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     <!-- /ko -->

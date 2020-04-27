@@ -178,3 +178,7 @@ ul.ca-actions li a:hover {
 .pull-right {
   float: right
 }
+
+.text-center {
+  text-align: center;
+}

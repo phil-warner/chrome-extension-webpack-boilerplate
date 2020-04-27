@@ -16,7 +16,8 @@
     "TooltipEventHandler": true,
     "insightFactory": true,
     "chrome": true,
-    "autosize": true
+    "autosize": true,
+    "ko": true
   },
   "parserOptions": {
     "ecmaVersion": 2018,

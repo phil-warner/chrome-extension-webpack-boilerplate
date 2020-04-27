@@ -28,6 +28,17 @@ const note = (e) => {
   });
 };
 
+const authenticate = (e) => {
+  e.preventDefault();
+  chrome.tabs.query({
+    currentWindow: true,
+    active: true
+  }, function(tabs) {
+    chrome.runtime.sendMessage({ cmd: 'web-app-login' });
+    // close the popup
+    window.close();
+  });
+};
 
 const Workspace = (data) => {
   this.name = data.name;
@@ -45,7 +56,7 @@ const SettingsModel = function() {
   const self = this;
   self.workspaces = ko.observableArray();
   self.workflows = ko.observableArray();
-  self.isLoggedIn = ko.observable(false);
+  self.isAuthenticated = ko.observable(false);
 
 
   self.getWorkspaces = () => {
@@ -58,6 +69,7 @@ const SettingsModel = function() {
           return new Workspace(workspace);
         });
         self.workspaces(mappedWorkspaces);
+        self.getWorkflows(mappedWorkspaces[0].name);
       });
     });
   };
@@ -72,9 +84,27 @@ const SettingsModel = function() {
           return new Workflow(workflow);
         });
         self.workflows(mappedWorkflows);
+        $('#popup-loader').hide();
+        $('#popup-content').fadeIn('fast');
       });
     });
   };
+
+  self.checkLogin = () => {
+    chrome.tabs.query({
+      currentWindow: true,
+      active: true
+    }, async function(tabs) {
+      const response = await chrome.tabs.sendMessage(tabs[0].id, { 'message': 'check-login' });
+      if(response.isAuthenticated){
+        self.isAuthenticated(true);
+        self.getWorkspaces();
+      }
+    });
+  };
+
+  self.checkLogin();
+
 };
 
 
@@ -85,6 +115,7 @@ $(document).ready(function() {
 	ko.applyBindings(settingsModel);
 
   // event bindings
+  $(document).on('click', '#authenticate', authenticate);
   $(document).on('click', '.ca-bookmark-page', bookmark);
   $(document).on('click', '.ca-note', note);
 
