@@ -334,7 +334,7 @@ $(document).ready(function() {
   $(document).on('mouseup', selectionHandler);
 
   // click handler to remove tooltip and unsaved clips when user clicks away
-  $(window).click(function(e) {
+  $(window).mousedown(function(e) {
 
     // don't close the tooltip if that is what is being clicked, or if
     if($(e.target).hasClass('ca-action')) {
