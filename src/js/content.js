@@ -306,7 +306,7 @@ $(document).ready(function() {
 
   // external event listeners
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === "bookmark-page") {
+    if (request.cmd === 'bookmark-page') {
       insightFactory.currentUUID = StringUtils.newUUID();
       initTypeForm({
         target: '#clipper-modal-body',
@@ -315,7 +315,7 @@ $(document).ready(function() {
         note: 'false'
       });
       $('#clipper-modal-trigger').click();
-    } else if (request.message === "take-a-note") {
+    } else if (request.cmd === 'take-a-note') {
       insightFactory.currentUUID = StringUtils.newUUID();
       initTypeForm({
         target: '#clipper-modal-body',
@@ -324,9 +324,9 @@ $(document).ready(function() {
         note: 'true'
       });
       $('#clipper-modal-trigger').click();
-    } else if (request.message === 'set-workflow') {
-      insightFactory.formid = request.formid;
-      insightFactory.workflowid = request.workflowid;
+    } else if (request.cmd === 'set-workflow') {
+      insightFactory.formid = request.workflow.uid;
+      insightFactory.workflowid = request.workflow.workflowid;
     }
   });
 
@@ -334,7 +334,7 @@ $(document).ready(function() {
   $(document).on('mouseup', selectionHandler);
 
   // click handler to remove tooltip and unsaved clips when user clicks away
-  $(window).click(function(e) {
+  $(window).mousedown(function(e) {
 
     // don't close the tooltip if that is what is being clicked, or if
     if($(e.target).hasClass('ca-action')) {

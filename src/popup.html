@@ -11,23 +11,22 @@
   <link href="css/custom.css" rel="stylesheet">
 </head>
 
-<body class="ca-clipper">
+<body class="ca-clipper" style="width: 400px">
   <div class="container">
     <!-- ko ifnot: isAuthenticated -->
       <input class="button-primary" id="authenticate" type="button" value="Log in" />
     <!-- /ko -->
     <!-- ko if: isAuthenticated -->
-      <div id="popup-loader" class="text-center"><i class="fas fa-book-open fa-pulse"></i></div>
-      <div id="popup-content" style="display: none">
+      <div id="popup-content">
         <div class="row">
           <label for="workspaces">Select workspace</label>
-          <select class="u-full-width" id="workspaces" data-bind="options: workspaces, value: selectedWorkspace, optionsText: name">
+          <select class="u-full-width" id="workspaces" data-bind="options: workspaces, value: selectedWorkspace, optionsText: 'name', optionsCaption: 'Select...'">
           </select>
           <hr>
         </div>
         <div class="row">
           <label for="workspaces">Select workflow</label>
-          <select class="u-full-width" id="workflows" data-bind="options: workflows, value: selectedWorkflow, optionsText: name">
+          <select class="u-full-width" id="workflows" data-bind="options: workflows, value: selectedWorkflow, optionsText: 'name', optionsCaption: 'Select...'">
           </select>
           <hr>
         </div>
@@ -45,6 +44,7 @@
 
   <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="js/knockout-3.5.1.js"></script>
+  <script type="text/javascript" src="js/utils.js"></script>
   <script type="text/javascript" src="js/popup.js"></script>
 
   <!-- knockout templates -->
