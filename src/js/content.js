@@ -1,11 +1,10 @@
 'use strict';
 
 const insightFactory = {};
-insightFactory.formid = 'W5UkZw';
-insightFactory.workflowid = '5e9c1ffccc5f70749996c152';
+insightFactory.workspace = {};
+insightFactory.workflow = {};
 insightFactory.selections = [];
 insightFactory.isAuthenticated = false;
-insightFactory.currentWorkspace = '5e9c2019cc5f70749996c153';
 
 // popper utility functions
 insightFactory.renderPopper = (e) => {
@@ -66,12 +65,12 @@ insightFactory.removePopper = (e) => {
 const initTypeForm = function(options) {
 
   // set the modal header title
-  $('#cause-clipper-title').text(options.title);
+  $('#cause-clipper-title').text(insightFactory.workflow.name);
 
   // load the typeform
   const embedElement = document.querySelector(options.target);
   const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
-  const typeformUrl = 'https://causeanalytics.typeform.com/to/' + insightFactory.formid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + insightFactory.workflowid + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+  const typeformUrl = 'https://causeanalytics.typeform.com/to/' + insightFactory.workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + insightFactory.workflow.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
 
   window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
     hideFooter: true,
@@ -80,14 +79,17 @@ const initTypeForm = function(options) {
     onSubmit: () => {
       if(options.cliptype === 'clip') {
         // submit the clip
+        const thisClip = insightFactory.selections.find((selection) => {
+          return selection.uuid === insightFactory.currentUUID;
+        });
         const clipData = {
-          content: insightFactory.currentSelection,
+          content: insightFactory.currentSelection.replace(/["']/g, ""),
           member: insightFactory.profile.memberid,
           uid: insightFactory.currentUUID,
-          ranges: insightFactory.selections[insightFactory.currentUUID].ranges,
+          ranges: thisClip ? thisClip.ranges[0]: '',
           type: options.cliptype,
           url: window.location.href,
-          workspace: insightFactory.currentWorkspace
+          workspace: insightFactory.workspace.id
         };
         chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
           return;
@@ -202,7 +204,7 @@ const appendToolbar = function() {
         ranges: selection.getRangeAt(0),
         type: 'clip',
         url: window.location.href,
-        workspace: insightFactory.currentWorkspace
+        workspace: insightFactory.workspace.id
       };
       chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
         $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
@@ -229,7 +231,6 @@ const appendToolbar = function() {
     window.getSelection().empty();
     initTypeForm({
       target: '#clipper-modal-body',
-      title: 'Tag this clip',
       cliptype: 'clip',
       note: 'false'
     });
@@ -283,11 +284,15 @@ const appendClipperModal = function() {
       beforeOpen: function() {
 				$('.ca-clipper-overlay').fadeIn();
 			},
+      afterOpen: function() {
+        AnnotationUtils.bindEscapeKey('.close-cause-clipper-modal');
+      },
       beforeClose: function() {
 				$('.ca-clipper-overlay').fadeOut();
 			},
 			afterClose: () => {
         $('#clipper-modal-body').html('');
+        AnnotationUtils.unbindEscapeKey();
 			}
 		});
   });
@@ -310,7 +315,6 @@ $(document).ready(function() {
       insightFactory.currentUUID = StringUtils.newUUID();
       initTypeForm({
         target: '#clipper-modal-body',
-        title: 'Add a bookmark',
         cliptype: 'bookmark',
         note: 'false'
       });
@@ -319,14 +323,18 @@ $(document).ready(function() {
       insightFactory.currentUUID = StringUtils.newUUID();
       initTypeForm({
         target: '#clipper-modal-body',
-        title: 'Take a note',
         cliptype: 'note',
         note: 'true'
       });
       $('#clipper-modal-trigger').click();
+    } else if (request.cmd === 'set-workspace') {
+      insightFactory.workspace = request.workspace;
     } else if (request.cmd === 'set-workflow') {
-      insightFactory.formid = request.workflow.uid;
-      insightFactory.workflowid = request.workflow.workflowid;
+      insightFactory.workflow = request.workflow;
+    } else if (request.cmd === 'get-selected-workspace') {
+      sendResponse(insightFactory.workspace);
+    } else if (request.cmd === 'get-selected-workflow') {
+      sendResponse(insightFactory.workflow);
     }
   });
 

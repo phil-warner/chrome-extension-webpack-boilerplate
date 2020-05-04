@@ -11,8 +11,8 @@
   <link href="css/custom.css" rel="stylesheet">
 </head>
 
-<body class="ca-clipper" style="width: 400px">
-  <div class="container">
+<body class="ca-clipper">
+  <div class="container ca-popup-body">
     <!-- ko ifnot: isAuthenticated -->
       <input class="button-primary" id="authenticate" type="button" value="Log in" />
     <!-- /ko -->
@@ -48,12 +48,12 @@
   <script type="text/javascript" src="js/popup.js"></script>
 
   <!-- knockout templates -->
-  <script type="text/html" id="workspace-option">
+  <!--<script type="text/html" id="workspace-option">
     <option data-bind="value: id, text: name, click: getWorkflows"></option>
   </script>
   <script type="text/html" id="workflow-option">
     <option data-bind="value: id, text: name, click: setWorkflow"></option>
-  </script>
+  </script>-->
 </body>
 
 </html>

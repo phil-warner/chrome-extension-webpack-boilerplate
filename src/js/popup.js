@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({cmd: 'popup-opened'});
+
 
 const bookmark = (e) => {
   e.preventDefault();
@@ -50,6 +50,18 @@ const checkLogin = (settingsModel) => {
   });
 };
 
+const setWorkspace = (workspace) => {
+  chrome.tabs.query({
+    currentWindow: true,
+    active: true
+  }, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      cmd: 'set-workspace',
+      workspace: workspace
+    });
+  });
+};
+
 const setWorkflow = (workflow) => {
   chrome.tabs.query({
     currentWindow: true,
@@ -64,16 +76,11 @@ const setWorkflow = (workflow) => {
 
 const authenticate = (e) => {
   e.preventDefault();
-  chrome.tabs.query({
-    currentWindow: true,
-    active: true
-  }, function(tabs) {
-    chrome.tabs.sendMessage({
-      cmd: 'web-app-login'
-    });
-    // close the popup
-    window.close();
+  chrome.tabs.create({
+    url: 'https://app.causeanalytics.com/login'
   });
+  // close the popup
+  window.close();
 };
 
 
@@ -99,48 +106,111 @@ const SettingsModel = function() {
   self.selectedWorkflow = ko.observable();
   self.email = ko.observable('');
 
+
   self.getWorkspaces = () => {
     chrome.runtime.sendMessage({
       cmd: 'get-workspaces',
       email: self.email()
     }, function(response) {
-      if (!response[0].workspaces || response[0].workspaces.length < 1) {
+      if (!response[0] || !response[0].workspaces || response[0].workspaces.length < 1) {
+        self.isAuthenticated(false);
         return;
       }
       const mappedWorkspaces = response[0].workspaces.map((workspace) => {
         return new Workspace(workspace);
       });
       self.workspaces(mappedWorkspaces);
-      self.selectedWorkspace(mappedWorkspaces[0].name);
-      self.getWorkflows();
+      self.getSelectedWorkspace();
     });
   };
 
 
-  self.getWorkflows = () => {
+  self.getWorkflows = (workspace) => {
+    if(!workspace) {
+      return;
+    }
     chrome.runtime.sendMessage({
       cmd: 'get-workflows',
-      workspace: self.selectedWorkspace()
+      workspace: workspace
     }, function(response) {
-      if (!response[0] || !response[0].workflows || response[0].workflows.length < 1) {
+      if (!response || !response[0] || !response[0].workflows || response[0].workflows.length < 1) {
         return;
       }
       const mappedWorkflows = response[0].workflows.map((workflow) => {
         return new Workflow(workflow);
       });
       self.workflows(mappedWorkflows);
+      self.getSelectedWorkflow();
       $('#popup-loader').hide();
       $('#popup-content').fadeIn('fast');
     });
   };
 
 
-  self.selectedWorkspace.subscribe(function(workspace) {
-    self.getWorkflows();
-  }, self);
+  self.getSelectedWorkspace = function() {
+    chrome.tabs.query({
+      currentWindow: true,
+      active: true
+    }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        cmd: 'get-selected-workspace'
+      }, function(response) {
+        if(response && response.name) {
+          const workspace = ko.utils.arrayFirst(self.workspaces(), (item) => {
+            return item.name === response.name;
+          });
+          self.selectedWorkspace(workspace);
+        } else {
+          self.selectedWorkspace(self.workspaces()[0]);
+        }
+        self.getWorkflows(self.selectedWorkspace());
+      });
+    });
+  };
 
 
-  self.selectedWorkflow.subscribe(setWorkflow);
+  self.getSelectedWorkflow = function() {
+    chrome.tabs.query({
+      currentWindow: true,
+      active: true
+    }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        cmd: 'get-selected-workflow'
+      }, function(response) {
+        if(response && response.workflowid) {
+          const workflow = ko.utils.arrayFirst(self.workflows(), (item) => {
+            return item.name === response.name;
+          });
+          self.selectedWorkflow(workflow);
+        } else {
+          self.selectedWorkflow(self.workflows()[0]);
+        }
+      });
+    });
+  };
+
+
+  // bindings
+  $(document).on('change', 'select#workspaces', function(){
+    const selectedWorkspace = $($(this).children("option:selected").get(0)).text();
+    const workspace = ko.utils.arrayFirst(self.workspaces(), (item) => {
+      return item.name === selectedWorkspace;
+    });
+    if(workspace){
+      setWorkspace(workspace);
+      self.getWorkflows(workspace);
+    }
+  });
+
+  $(document).on('change', 'select#workflows', function(){
+    const selectedWorkflow = $($(this).children("option:selected").get(0)).text();
+    const workflow = ko.utils.arrayFirst(self.workflows(), (item) => {
+      return item.name === selectedWorkflow;
+    });
+    if(workflow){
+      setWorkflow(workflow);
+    }
+  });
 
 };
 
@@ -156,18 +226,22 @@ window.onload = function() {
   checkLogin(settingsModel);
 
   // update authenticated state
-  chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      if (request.cmd === 'profile-data') {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.cmd === 'profile-data') {
+      if(request.data.profile) {
         settingsModel.email(request.data.profile.email);
         settingsModel.isAuthenticated(true);
+      } else {
+        settingsModel.isAuthenticated(false);
       }
     }
-  );
+  });
 
   // event bindings
   $(document).on('click', '#authenticate', authenticate);
   $(document).on('click', '.ca-bookmark-page', bookmark);
   $(document).on('click', '.ca-note', note);
+
+  chrome.runtime.sendMessage({ cmd: 'popup-opened' });
 
 };

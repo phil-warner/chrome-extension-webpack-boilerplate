@@ -29,7 +29,7 @@ const getWorkspaces = function(email, sendResponse) {
 
 
 const getWorkflows = function(workspace, sendResponse) {
-  fetch('https://api.causeanalytics.com/workspaces?name=' + workspace, {
+  fetch('https://api.causeanalytics.com/workspaces?name=' + workspace.name, {
     method: 'GET',
     mode: 'cors',
     headers: {
@@ -72,6 +72,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       success: sendResponse
     });
   } else if (request.cmd == 'web-app-login') {
+    console.log('login');
     chrome.tabs.create({
       url: 'https://app.causeanalytics.com/login'
     });

@@ -31,6 +31,23 @@ class StringUtils {
 }
 
 
+class AnnotationUtils {
+
+  static bindEscapeKey(selector) {
+    $(document).keyup(function(e) {
+      if (e.keyCode === 27) {
+        $(selector).click();
+      }
+    });
+  }
+
+  static unbindEscapeKey() {
+    $(document).unbind('keyup');
+  }
+
+}
+
+
 class Tooltip {
 
   constructor(elem, tooltip, uuid, selection) {

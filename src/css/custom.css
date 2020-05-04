@@ -137,8 +137,9 @@ a.disabled {
 }
 
 /* popup css */
-.ca-popup-body {
-  width: 300px;
+.ca-clipper .ca-popup-body {
+  min-width: 300px;
+  margin-top: 20px;
   padding: 20px 5px;
 }
 ul.ca-actions {
