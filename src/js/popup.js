@@ -60,6 +60,7 @@ const setWorkspace = (workspace) => {
       workspace: workspace
     });
   });
+
 };
 
 const setWorkflow = (workflow) => {
@@ -72,6 +73,11 @@ const setWorkflow = (workflow) => {
       workflow: workflow
     });
   });
+
+  chrome.storage.sync.set({ ifWorkflow : workflow }, function() {
+    console.log('workflow is set to ' + workflow.name );
+  });
+
 };
 
 const authenticate = (e) => {
@@ -162,6 +168,7 @@ const SettingsModel = function() {
           self.selectedWorkspace(workspace);
         } else {
           self.selectedWorkspace(self.workspaces()[0]);
+          setWorkspace(self.workspaces()[0]);
         }
         self.getWorkflows(self.selectedWorkspace());
       });

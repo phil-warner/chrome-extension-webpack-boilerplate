@@ -309,6 +309,11 @@ $(document).ready(function() {
   appendToolbar();
   appendClipperModal();
 
+  // log the workflow
+  chrome.storage.sync.get(['ifWorkflow'], function(result) {
+    console.log('Workflow currently is ' + JSON.stringify(result));
+  });
+
   // external event listeners
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.cmd === 'bookmark-page') {
