@@ -216,6 +216,32 @@ class AuthUtils {
   static getProfile() {
     chrome.runtime.sendMessage({ cmd: 'get-profile' }, function(response) {
       insightFactory.profile = response;
+      AuthUtils.getWorkflows();
+    });
+  }
+
+  static setDefaultWorkflow(workflow) {
+    chrome.storage.local.set({ ifWorkflow : workflow }, function() {
+      console.log('workspace set to ' + workflow.name );
+    });
+  }
+
+  static getWorkflows() {
+    // check local storage for a list of workspaces - may be synced from another browser instance
+    chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
+      if(!workspaces.ifWorkspaces) {
+        // expecting an array - so no workspaces yet
+        chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(workspaces) {
+          console.log(workspaces[0]);
+          chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces[0] }, function(workflows) {
+            AuthUtils.setDefaultWorkflow(workflows[0]);
+          });
+        });
+      } else {
+        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
+          AuthUtils.setDefaultWorkflow(workflows[0]);
+        });
+      }
     });
   }
 

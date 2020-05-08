@@ -1,8 +1,6 @@
 'use strict';
 
 const insightFactory = {};
-insightFactory.workspace = {};
-insightFactory.workflow = {};
 insightFactory.selections = [];
 insightFactory.isAuthenticated = false;
 
@@ -64,40 +62,49 @@ insightFactory.removePopper = (e) => {
 
 const initTypeForm = function(options) {
 
-  // set the modal header title
-  $('#cause-clipper-title').text(insightFactory.workflow.name);
+  chrome.storage.local.get(['ifWorkflow'], function(workflow) {
 
-  // load the typeform
-  const embedElement = document.querySelector(options.target);
-  const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
-  const typeformUrl = 'https://causeanalytics.typeform.com/to/' + insightFactory.workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + insightFactory.workflow.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+    workflow = workflow.ifWorkflow;
+    // set the modal header title
+    $('#cause-clipper-title').text(workflow.name);
 
-  window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
-    hideFooter: true,
-    hideHeaders: true,
-    opacity: 0,
-    onSubmit: () => {
-      if(options.cliptype === 'clip') {
-        // submit the clip
-        const thisClip = insightFactory.selections.find((selection) => {
-          return selection.uuid === insightFactory.currentUUID;
-        });
-        const clipData = {
-          content: insightFactory.currentSelection.replace(/["']/g, ""),
-          member: insightFactory.profile.memberid,
-          uid: insightFactory.currentUUID,
-          ranges: thisClip ? thisClip.ranges[0]: '',
-          type: options.cliptype,
-          url: window.location.href,
-          workspace: insightFactory.workspace.id
-        };
-        chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-          return;
-        });
+    // load the typeform
+    const embedElement = document.querySelector(options.target);
+    const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
+    const typeformUrl = 'https://causeanalytics.typeform.com/to/' + workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + workflow.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+
+    window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
+      hideFooter: true,
+      hideHeaders: true,
+      opacity: 0,
+      onSubmit: () => {
+
+        if(options.cliptype === 'clip') {
+
+          chrome.storage.local.get(['ifWorkspace'], function(workspace) {
+            // submit the clip
+            const thisClip = insightFactory.selections.find((selection) => {
+              return selection.uuid === insightFactory.currentUUID;
+            });
+            const clipData = {
+              content: insightFactory.currentSelection.replace(/["']/g, ""),
+              member: insightFactory.profile.memberid,
+              uid: insightFactory.currentUUID,
+              ranges: thisClip ? thisClip.ranges[0]: '',
+              type: options.cliptype,
+              url: window.location.href,
+              workspace: workspace.id
+            };
+            chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+              return;
+            });
+          });
+
+        }
+        // close the modal
+        $('.close-cause-clipper-modal').click();
       }
-      // close the modal
-      $('.close-cause-clipper-modal').click();
-    }
+    });
   });
 };
 
@@ -196,20 +203,22 @@ const appendToolbar = function() {
     });
     if(clip) {
       clip.saved = true;
-      // submit the clip
-      const clipData = {
-        content: insightFactory.currentSelection,
-        member: insightFactory.profile.memberid,
-        uid: insightFactory.currentUUID,
-        ranges: selection.getRangeAt(0),
-        type: 'clip',
-        url: window.location.href,
-        workspace: insightFactory.workspace.id
-      };
-      chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-        $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
-        $('.delete-clip').removeClass('disabled');
-        selection.empty();
+      chrome.storage.local.get(['ifWorkspace'], function(workspace) {
+        // submit the clip
+        const clipData = {
+          content: insightFactory.currentSelection,
+          member: insightFactory.profile.memberid,
+          uid: insightFactory.currentUUID,
+          ranges: selection.getRangeAt(0),
+          type: 'clip',
+          url: window.location.href,
+          workspace: workspace.id
+        };
+        chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+          $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
+          $('.delete-clip').removeClass('disabled');
+          selection.empty();
+        });
       });
     }
   });
@@ -309,11 +318,6 @@ $(document).ready(function() {
   appendToolbar();
   appendClipperModal();
 
-  // log the workflow
-  chrome.storage.sync.get(['ifWorkflow'], function(result) {
-    console.log('Workflow currently is ' + JSON.stringify(result));
-  });
-
   // external event listeners
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.cmd === 'bookmark-page') {
@@ -332,14 +336,6 @@ $(document).ready(function() {
         note: 'true'
       });
       $('#clipper-modal-trigger').click();
-    } else if (request.cmd === 'set-workspace') {
-      insightFactory.workspace = request.workspace;
-    } else if (request.cmd === 'set-workflow') {
-      insightFactory.workflow = request.workflow;
-    } else if (request.cmd === 'get-selected-workspace') {
-      sendResponse(insightFactory.workspace);
-    } else if (request.cmd === 'get-selected-workflow') {
-      sendResponse(insightFactory.workflow);
     }
   });
 

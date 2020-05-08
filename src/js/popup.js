@@ -51,33 +51,15 @@ const checkLogin = (settingsModel) => {
 };
 
 const setWorkspace = (workspace) => {
-  chrome.tabs.query({
-    currentWindow: true,
-    active: true
-  }, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      cmd: 'set-workspace',
-      workspace: workspace
-    });
+  chrome.storage.local.set({ ifWorkspace : workspace }, function() {
+    console.log('workspace set to ' + workspace.name );
   });
-
 };
 
 const setWorkflow = (workflow) => {
-  chrome.tabs.query({
-    currentWindow: true,
-    active: true
-  }, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      cmd: 'set-workflow',
-      workflow: workflow
-    });
-  });
-
-  chrome.storage.sync.set({ ifWorkflow : workflow }, function() {
+  chrome.storage.local.set({ ifWorkflow : workflow }, function() {
     console.log('workflow is set to ' + workflow.name );
   });
-
 };
 
 const authenticate = (e) => {
@@ -114,15 +96,9 @@ const SettingsModel = function() {
 
 
   self.getWorkspaces = () => {
-    chrome.runtime.sendMessage({
-      cmd: 'get-workspaces',
-      email: self.email()
-    }, function(response) {
-      if (!response[0] || !response[0].workspaces || response[0].workspaces.length < 1) {
-        self.isAuthenticated(false);
-        return;
-      }
-      const mappedWorkspaces = response[0].workspaces.map((workspace) => {
+    chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
+      workspaces = workspaces.ifWorkspaces;
+      const mappedWorkspaces = workspaces.map((workspace) => {
         return new Workspace(workspace);
       });
       self.workspaces(mappedWorkspaces);
@@ -132,67 +108,38 @@ const SettingsModel = function() {
 
 
   self.getWorkflows = (workspace) => {
-    if(!workspace) {
-      return;
-    }
-    chrome.runtime.sendMessage({
-      cmd: 'get-workflows',
-      workspace: workspace
-    }, function(response) {
-      if (!response || !response[0] || !response[0].workflows || response[0].workflows.length < 1) {
-        return;
-      }
-      const mappedWorkflows = response[0].workflows.map((workflow) => {
+    chrome.storage.local.get(['ifWorkflows'], function(workflows) {
+      workflows = workflows.ifWorkflows;
+      const mappedWorkflows = workflows.map((workflow) => {
         return new Workflow(workflow);
       });
       self.workflows(mappedWorkflows);
       self.getSelectedWorkflow();
-      $('#popup-loader').hide();
-      $('#popup-content').fadeIn('fast');
     });
   };
 
 
   self.getSelectedWorkspace = function() {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: true
-    }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        cmd: 'get-selected-workspace'
-      }, function(response) {
-        if(response && response.name) {
-          const workspace = ko.utils.arrayFirst(self.workspaces(), (item) => {
-            return item.name === response.name;
-          });
-          self.selectedWorkspace(workspace);
-        } else {
-          self.selectedWorkspace(self.workspaces()[0]);
-          setWorkspace(self.workspaces()[0]);
-        }
-        self.getWorkflows(self.selectedWorkspace());
-      });
+    chrome.storage.local.get(['ifWorkspace'], function(workspace) {
+      if(workspace.ifWorkspace) {
+        const koWorkspace = ko.utils.arrayFirst(self.workspaces(), (item) => {
+          return item.name === workspace.ifWorkspace.name;
+        });
+        self.selectedWorkspace(koWorkspace);
+      } else {
+        self.selectedWorkspace(self.workspaces()[0]);
+      }
+      self.getWorkflows(self.selectedWorkspace());
     });
   };
 
 
   self.getSelectedWorkflow = function() {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: true
-    }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {
-        cmd: 'get-selected-workflow'
-      }, function(response) {
-        if(response && response.workflowid) {
-          const workflow = ko.utils.arrayFirst(self.workflows(), (item) => {
-            return item.name === response.name;
-          });
-          self.selectedWorkflow(workflow);
-        } else {
-          self.selectedWorkflow(self.workflows()[0]);
-        }
+    chrome.storage.local.get(['ifWorkflow'], function(workflow) {
+      const koWorkflow = ko.utils.arrayFirst(self.workflows(), (item) => {
+        return item.name === workflow.ifWorkflow.name;
       });
+      self.selectedWorkflow(koWorkflow);
     });
   };
 
@@ -235,8 +182,8 @@ window.onload = function() {
   // update authenticated state
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.cmd === 'profile-data') {
-      if(request.data.profile) {
-        settingsModel.email(request.data.profile.email);
+      if(request.data.email) {
+        settingsModel.email(request.data.email);
         settingsModel.isAuthenticated(true);
       } else {
         settingsModel.isAuthenticated(false);

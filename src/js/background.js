@@ -23,7 +23,9 @@ const getWorkspaces = function(email, sendResponse) {
     return response.json();
   })
   .then(function(result) {
-    sendResponse(result);
+    chrome.storage.local.set({ ifWorkspaces : result[0].workspaces }, function() {
+      sendResponse(result[0].workspaces);
+    });
   });
 };
 
@@ -40,10 +42,11 @@ const getWorkflows = function(workspace, sendResponse) {
     return response.json();
   })
   .then(function(result) {
-    sendResponse(result);
+    chrome.storage.local.set({ ifWorkflows : result[0].workflows }, function() {
+      sendResponse(result[0].workflows);
+    });
   });
 };
-
 
 const submitClip = function(clipdata, sendResponse) {
   fetch('https://api.causeanalytics.com/clips', {
@@ -96,6 +99,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
   } else if (request.cmd == 'get-workflows') {
     getWorkflows(request.workspace, sendResponse);
+    return true;
+  } else if (request.cmd == 'get-default-workflow') {
+    getDefaultWorkflow(sendResponse);
     return true;
   } else if (request.cmd == 'submit-clip') {
     submitClip(request.data, sendResponse);
