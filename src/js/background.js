@@ -42,7 +42,7 @@ const getWorkflows = function(workspace, sendResponse) {
     return response.json();
   })
   .then(function(result) {
-    chrome.storage.local.set({ ifWorkflows : result[0].workflows }, function() {
+    chrome.storage.local.set({ ifWorkflows : result.workflows }, function() {
       sendResponse(result[0].workflows);
     });
   });

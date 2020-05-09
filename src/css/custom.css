@@ -1,9 +1,9 @@
 /* brand styles */
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 
-body .ca-clipper {
+body.ca-clipper {
   position: relative;
-  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
   line-height: 22.4px;
@@ -140,7 +140,7 @@ a.disabled {
 .ca-clipper .ca-popup-body {
   min-width: 300px;
   margin-top: 20px;
-  padding: 20px 5px;
+  padding: 20px;
 }
 ul.ca-actions {
   padding-inline-start: 0;
@@ -169,8 +169,28 @@ ul.ca-actions li a:hover {
 }
 
 /* skeleton overrides */
+.ca-clipper a, .ca-clipper .button {
+  -webkit-transition: all .3s ease-out 0s;
+  -moz-transition: all .3s ease-out 0s;
+  -ms-transition: all .3s ease-out 0s;
+  -o-transition: all .3s ease-out 0s;
+  transition: all .3s ease-out 0s
+}
+
 .ca-clipper .button {
   border-radius: 2px
+}
+
+.ca-clipper .button.button-primary {
+  background-color: #7a1e48;
+  border-color: #7a1e48;
+  color: white;
+}
+
+.ca-clipper .button.button-primary:hover, .ca-clipper .button.button-primary:active  {
+  background-color: transparent;
+  color: #7a1e48;
+  border-color: #7a1e48;
 }
 
 .pull-left {
@@ -179,6 +199,10 @@ ul.ca-actions li a:hover {
 
 .pull-right {
   float: right
+}
+
+.mt-20 {
+  margin-top: 20px
 }
 
 .text-center {

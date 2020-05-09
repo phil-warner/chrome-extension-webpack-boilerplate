@@ -111,54 +111,64 @@ const initTypeForm = function(options) {
 
 const selectionHandler = function(e) {
 
-  const tooltip = document.querySelector('#ca-tooltip');
-  const inputTypes = ['INPUT', 'SELECT'];
+  chrome.storage.sync.get({
+    highlighter: true
+  }, function(items) {
 
-  if(tooltip.hasAttribute('data-show') || inputTypes.includes(e.target.tagName) || e.target.isContentEditable) {
-    return;
-  }
+    if(!items.highlighter) {
+      return;
+    }
 
-  const selection = document.getSelection();
-
-  if (!selection.isCollapsed) {
-    // get the selected range
-    const selectionRange = document.getSelection().getRangeAt(0);
-    const safeRanges = SelectionUtils.getSafeRanges(selectionRange);
-
-    const uuid = StringUtils.newUUID();
-    insightFactory.uuid = uuid;
-
-    safeRanges.forEach((range) => {
-      SelectionUtils.clipRange(range, uuid);
-    });
-
-    // set up the toolbar
-    const clipRoot = document.querySelector('clip[data-ifuuid="' + uuid + '"]');
     const tooltip = document.querySelector('#ca-tooltip');
+    const inputTypes = ['INPUT', 'SELECT'];
 
-    // add event listeners to all the matching clip elements
-    new Tooltip(clipRoot, tooltip, uuid, selection);
+    if(tooltip.hasAttribute('data-show') || inputTypes.includes(e.target.tagName) || e.target.isContentEditable) {
+      return;
+    }
 
-    // trigger the tooltip the first time
-    insightFactory.currentUUID = uuid;
-    insightFactory.currentSelection = selection.toString();
-    const mouseenterEvent = new Event('mouseenter');
-    // document.querySelector(clipSelector).dispatchEvent(mouseenterEvent);
-    clipRoot.dispatchEvent(mouseenterEvent);
+    const selection = document.getSelection();
 
-    // save the selection
-    insightFactory.selections.push({
-      selection: selection,
-      uuid: uuid,
-      ranges: safeRanges,
-      saved: false
-    });
+    if (!selection.isCollapsed) {
+      // get the selected range
+      const selectionRange = document.getSelection().getRangeAt(0);
+      const safeRanges = SelectionUtils.getSafeRanges(selectionRange);
 
-    setTimeout(() => {
-      document.querySelector('#ca-tooltip').setAttribute('data-show','');
-    }, 250);
+      const uuid = StringUtils.newUUID();
+      insightFactory.uuid = uuid;
 
-  }
+      safeRanges.forEach((range) => {
+        SelectionUtils.clipRange(range, uuid);
+      });
+
+      // set up the toolbar
+      const clipRoot = document.querySelector('clip[data-ifuuid="' + uuid + '"]');
+      const tooltip = document.querySelector('#ca-tooltip');
+
+      // add event listeners to all the matching clip elements
+      new Tooltip(clipRoot, tooltip, uuid, selection);
+
+      // trigger the tooltip the first time
+      insightFactory.currentUUID = uuid;
+      insightFactory.currentSelection = selection.toString();
+      const mouseenterEvent = new Event('mouseenter');
+      // document.querySelector(clipSelector).dispatchEvent(mouseenterEvent);
+      clipRoot.dispatchEvent(mouseenterEvent);
+
+      // save the selection
+      insightFactory.selections.push({
+        selection: selection,
+        uuid: uuid,
+        ranges: safeRanges,
+        saved: false
+      });
+
+      setTimeout(() => {
+        document.querySelector('#ca-tooltip').setAttribute('data-show','');
+      }, 250);
+
+    }
+
+  });
 
 };
 

@@ -333,8 +333,8 @@ there.
 .ca-clipper input[type="reset"].button-primary,
 .ca-clipper input[type="button"].button-primary {
   color: #FFF;
-  background-color: #33C3F0;
-  border-color: #33C3F0;
+  background-color: #1BB0CE;
+  border-color: #1BB0CE;
 }
 .ca-clipper .button.button-primary:hover,
 .ca-clipper button.button-primary:hover,
@@ -347,8 +347,8 @@ there.
 .ca-clipper input[type="reset"].button-primary:focus,
 .ca-clipper input[type="button"].button-primary:focus {
   color: #FFF;
-  background-color: #1EAEDB;
-  border-color: #1EAEDB;
+  background-color: rgb(27,176,206,0.5);
+  border-color: rgb(27,176,206,0.5);
 }
 .ca-clipper input[type="email"],
 .ca-clipper input[type="number"],

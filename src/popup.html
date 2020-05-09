@@ -19,12 +19,15 @@
     <!-- ko if: isAuthenticated -->
       <div id="popup-content">
         <div class="row">
+          <img src="/img/logo-cause-analytics-colour.png" width="290px"/>
+          <hr>
+        </div>
+        <div class="row mt-20">
           <label for="workspaces">Select workspace</label>
           <select class="u-full-width" id="workspaces" data-bind="options: workspaces, value: selectedWorkspace, optionsText: 'name', optionsCaption: 'Select...'">
           </select>
-          <hr>
         </div>
-        <div class="row">
+        <div class="row mt-20">
           <label for="workspaces">Select workflow</label>
           <select class="u-full-width" id="workflows" data-bind="options: workflows, value: selectedWorkflow, optionsText: 'name', optionsCaption: 'Select...'">
           </select>

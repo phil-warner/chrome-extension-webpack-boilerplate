@@ -50,18 +50,6 @@ const checkLogin = (settingsModel) => {
   });
 };
 
-const setWorkspace = (workspace) => {
-  chrome.storage.local.set({ ifWorkspace : workspace }, function() {
-    console.log('workspace set to ' + workspace.name );
-  });
-};
-
-const setWorkflow = (workflow) => {
-  chrome.storage.local.set({ ifWorkflow : workflow }, function() {
-    console.log('workflow is set to ' + workflow.name );
-  });
-};
-
 const authenticate = (e) => {
   e.preventDefault();
   chrome.tabs.create({
@@ -94,8 +82,17 @@ const SettingsModel = function() {
   self.selectedWorkflow = ko.observable();
   self.email = ko.observable('');
 
+  self.setWorkspace = function(workspace) {
+    chrome.storage.local.set({ ifWorkspace : workspace }, function() {
+      console.log('workspace set to ' + workspace.name );
+    });
+  };
 
-  self.getWorkspaces = () => {
+  self.setWorkflow = function(workflow) {
+    chrome.storage.local.set({ ifWorkflow : workflow });
+  };
+
+  self.getWorkspaces = function() {
     chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
       workspaces = workspaces.ifWorkspaces;
       const mappedWorkspaces = workspaces.map((workspace) => {
@@ -107,9 +104,8 @@ const SettingsModel = function() {
   };
 
 
-  self.getWorkflows = (workspace) => {
-    chrome.storage.local.get(['ifWorkflows'], function(workflows) {
-      workflows = workflows.ifWorkflows;
+  self.getWorkflows = function(workspace) {
+    chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspace }, function(workflows) {
       const mappedWorkflows = workflows.map((workflow) => {
         return new Workflow(workflow);
       });
@@ -120,10 +116,10 @@ const SettingsModel = function() {
 
 
   self.getSelectedWorkspace = function() {
-    chrome.storage.local.get(['ifWorkspace'], function(workspace) {
-      if(workspace.ifWorkspace) {
+    chrome.storage.local.get(['ifWorkspace'], function(result) {
+      if(result.ifWorkspace) {
         const koWorkspace = ko.utils.arrayFirst(self.workspaces(), (item) => {
-          return item.name === workspace.ifWorkspace.name;
+          return item.name === result.ifWorkspace.name;
         });
         self.selectedWorkspace(koWorkspace);
       } else {
@@ -135,11 +131,13 @@ const SettingsModel = function() {
 
 
   self.getSelectedWorkflow = function() {
-    chrome.storage.local.get(['ifWorkflow'], function(workflow) {
+    chrome.storage.local.get(['ifWorkflow'], function(result) {
       const koWorkflow = ko.utils.arrayFirst(self.workflows(), (item) => {
-        return item.name === workflow.ifWorkflow.name;
+        return item.name === result.ifWorkflow.name;
       });
-      self.selectedWorkflow(koWorkflow);
+      const workflow = koWorkflow ? koWorkflow : self.workflows()[0];
+      self.selectedWorkflow(workflow);
+      self.setWorkflow(workflow);
     });
   };
 
@@ -151,7 +149,7 @@ const SettingsModel = function() {
       return item.name === selectedWorkspace;
     });
     if(workspace){
-      setWorkspace(workspace);
+      self.setWorkspace(workspace);
       self.getWorkflows(workspace);
     }
   });
@@ -162,7 +160,7 @@ const SettingsModel = function() {
       return item.name === selectedWorkflow;
     });
     if(workflow){
-      setWorkflow(workflow);
+      self.setWorkflow(workflow);
     }
   });
 
