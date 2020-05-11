@@ -92,9 +92,9 @@ const SettingsModel = function() {
     chrome.storage.local.set({ ifWorkflow : workflow });
   };
 
+
   self.getWorkspaces = function() {
-    chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
-      workspaces = workspaces.ifWorkspaces;
+    chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: self.email() }, function(workspaces) {
       const mappedWorkspaces = workspaces.map((workspace) => {
         return new Workspace(workspace);
       });

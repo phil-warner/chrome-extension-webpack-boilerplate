@@ -230,9 +230,7 @@ class AuthUtils {
     // check local storage for a list of workspaces - may be synced from another browser instance
     chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
       if(!workspaces.ifWorkspaces) {
-        // expecting an array - so no workspaces yet
         chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(workspaces) {
-          console.log(workspaces[0]);
           chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces[0] }, function(workflows) {
             chrome.storage.local.set({ ifWorkflows : workflows }, function() {
               AuthUtils.setDefaultWorkflow(workflows[0]);
@@ -240,28 +238,12 @@ class AuthUtils {
           });
         });
       } else {
-        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
+        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces[0] }, function(workflows) {
           chrome.storage.local.set({ ifWorkflows : workflows }, function() {
             AuthUtils.setDefaultWorkflow(workflows[0]);
           });
         });
       }
-    });
-  }
-
-}
-
-class ApiUtils {
-
-  static getWorkspaces() {
-    chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(response) {
-      insightFactory.profile = response;
-    });
-  }
-
-  static getWorkflows(workspace) {
-    chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspace }, function(response) {
-      insightFactory.profile = response;
     });
   }
 
