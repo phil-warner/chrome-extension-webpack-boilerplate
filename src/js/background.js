@@ -42,7 +42,7 @@ const getWorkflows = function(workspace, sendResponse) {
     return response.json();
   })
   .then(function(result) {
-    chrome.storage.local.set({ ifWorkflows : result.workflows }, function() {
+    chrome.storage.local.set({ ifWorkflows : result[0].workflows }, function() {
       sendResponse(result[0].workflows);
     });
   });
@@ -75,7 +75,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       success: sendResponse
     });
   } else if (request.cmd == 'web-app-login') {
-    console.log('login');
     chrome.tabs.create({
       url: 'https://app.causeanalytics.com/login'
     });
@@ -99,9 +98,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
   } else if (request.cmd == 'get-workflows') {
     getWorkflows(request.workspace, sendResponse);
-    return true;
-  } else if (request.cmd == 'get-default-workflow') {
-    getDefaultWorkflow(sendResponse);
     return true;
   } else if (request.cmd == 'submit-clip') {
     submitClip(request.data, sendResponse);

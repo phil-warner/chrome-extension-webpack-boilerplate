@@ -65,6 +65,7 @@ const initTypeForm = function(options) {
   chrome.storage.local.get(['ifWorkflow'], function(workflow) {
 
     workflow = workflow.ifWorkflow;
+    console.log(workflow);
     // set the modal header title
     $('#cause-clipper-title').text(workflow.name);
 

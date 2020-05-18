@@ -222,7 +222,7 @@ class AuthUtils {
 
   static setDefaultWorkflow(workflow) {
     chrome.storage.local.set({ ifWorkflow : workflow }, function() {
-      console.log('workspace set to ' + workflow.name );
+      console.info('workspace set to ' + workflow.name );
     });
   }
 
@@ -231,17 +231,13 @@ class AuthUtils {
     chrome.storage.local.get(['ifWorkspaces'], function(workspaces) {
       if(!workspaces.ifWorkspaces) {
         chrome.runtime.sendMessage({ cmd: 'get-workspaces', email: insightFactory.profile.email }, function(workspaces) {
-          chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces[0] }, function(workflows) {
-            chrome.storage.local.set({ ifWorkflows : workflows }, function() {
-              AuthUtils.setDefaultWorkflow(workflows[0]);
-            });
+          chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
+            AuthUtils.setDefaultWorkflow(workflows[0]);
           });
         });
       } else {
-        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces[0] }, function(workflows) {
-          chrome.storage.local.set({ ifWorkflows : workflows }, function() {
-            AuthUtils.setDefaultWorkflow(workflows[0]);
-          });
+        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
+          AuthUtils.setDefaultWorkflow(workflows[0]);
         });
       }
     });
