@@ -62,51 +62,57 @@ insightFactory.removePopper = (e) => {
 
 const initTypeForm = function(options) {
 
-  chrome.storage.local.get(['ifWorkflow'], function(workflow) {
+  chrome.storage.local.get(['ifWorkspace'], function(workspace) {
 
-    workflow = workflow.ifWorkflow;
-    console.log(workflow);
-    // set the modal header title
-    $('#cause-clipper-title').text(workflow.name);
+    chrome.storage.local.get(['ifWorkflow'], function(workflow) {
 
-    // load the typeform
-    const embedElement = document.querySelector(options.target);
-    const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
-    const typeformUrl = 'https://causeanalytics.typeform.com/to/' + workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + workflow.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+      workspace = workspace.ifWorkspace;
+      workflow = workflow.ifWorkflow;
 
-    window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
-      hideFooter: true,
-      hideHeaders: true,
-      opacity: 0,
-      onSubmit: () => {
+      // set the modal header title
+      $('#cause-clipper-title').text(workflow.name);
 
-        if(options.cliptype === 'clip') {
+      // load the typeform
+      const embedElement = document.querySelector(options.target);
+      const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
+      const typeformUrl = 'https://causeanalytics.typeform.com/to/' + workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + workflow.workflowid + '&workspaceid=' + workspace.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
 
-          chrome.storage.local.get(['ifWorkspace'], function(workspace) {
-            // submit the clip
-            const thisClip = insightFactory.selections.find((selection) => {
-              return selection.uuid === insightFactory.currentUUID;
+      window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
+        hideFooter: true,
+        hideHeaders: true,
+        opacity: 0,
+        onSubmit: () => {
+
+          if(options.cliptype === 'clip') {
+
+            chrome.storage.local.get(['ifWorkspace'], function(workspace) {
+              // submit the clip
+              const thisClip = insightFactory.selections.find((selection) => {
+                return selection.uuid === insightFactory.currentUUID;
+              });
+              const clipData = {
+                content: insightFactory.currentSelection.replace(/["']/g, ""),
+                member: insightFactory.profile.memberid,
+                uid: insightFactory.currentUUID,
+                ranges: thisClip ? thisClip.ranges[0]: '',
+                type: options.cliptype,
+                url: window.location.href,
+                workspace: workspace.id
+              };
+              chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+                return;
+              });
             });
-            const clipData = {
-              content: insightFactory.currentSelection.replace(/["']/g, ""),
-              member: insightFactory.profile.memberid,
-              uid: insightFactory.currentUUID,
-              ranges: thisClip ? thisClip.ranges[0]: '',
-              type: options.cliptype,
-              url: window.location.href,
-              workspace: workspace.id
-            };
-            chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-              return;
-            });
-          });
 
+          }
+          // close the modal
+          $('.close-cause-clipper-modal').click();
         }
-        // close the modal
-        $('.close-cause-clipper-modal').click();
-      }
+      });
     });
   });
+
+
 };
 
 

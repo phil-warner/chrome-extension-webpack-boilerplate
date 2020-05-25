@@ -84,7 +84,7 @@ const SettingsModel = function() {
 
   self.setWorkspace = function(workspace) {
     chrome.storage.local.set({ ifWorkspace : workspace }, function() {
-      console.log('workspace set to ' + workspace.name );
+      //console.log('workspace set to ' + workspace.name );
     });
   };
 
@@ -125,6 +125,7 @@ const SettingsModel = function() {
       } else {
         self.selectedWorkspace(self.workspaces()[0]);
       }
+      self.setWorkspace(self.selectedWorkspace());
       self.getWorkflows(self.selectedWorkspace());
     });
   };
