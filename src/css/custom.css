@@ -187,7 +187,7 @@ ul.ca-actions li a:hover {
   color: white;
 }
 
-.ca-clipper .button.button-primary:hover, .ca-clipper .button.button-primary:active  {
+.ca-clipper .button.button-primary:hover, .ca-clipper .button.button-primary:active, .ca-clipper .button.button-primary:focus  {
   background-color: transparent;
   color: #7a1e48;
   border-color: #7a1e48;

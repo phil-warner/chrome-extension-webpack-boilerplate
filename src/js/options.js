@@ -1,16 +1,21 @@
 
 // Saves options to chrome.storage
 function save_options() {
-  var highlight = document.getElementById('highlight').checked;
+  const color = document.getElementById('color').value;
   chrome.storage.sync.set({
-    highlighter: highlight
+    color: color
   }, function() {
-    // Update status to let user know options were saved.
-    var status = document.getElementById('status');
-    status.textContent = 'Options saved.';
-    setTimeout(function() {
-      status.textContent = '';
-    }, 750);
+    const highlight = document.getElementById('highlight').checked;
+    chrome.storage.sync.set({
+      highlighter: highlight
+    }, function() {
+      // Update status to let user know options were saved.
+      const status = document.getElementById('status');
+      status.textContent = 'Options saved.';
+      setTimeout(function() {
+        status.textContent = '';
+      }, 1500);
+    });
   });
 }
 
@@ -22,6 +27,12 @@ function restore_options() {
     highlighter: true
   }, function(items) {
     document.getElementById('highlight').checked = items.highlighter;
+  });
+  // default value '#E6E6FA'
+  chrome.storage.sync.get({
+    color: '#E6E6FA'
+  }, function(items) {
+    document.getElementById('color').value = items.color;
   });
 }
 document.addEventListener('DOMContentLoaded', restore_options);

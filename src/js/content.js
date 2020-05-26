@@ -204,40 +204,44 @@ const appendToolbar = function() {
       return;
     }
 
-    // highlight the range for this clip
-    SelectionUtils.highlightRange('lavenderblush');
-    const selection = window.getSelection();
+    // highlight the range for this clip - default value '#e66465'
+    chrome.storage.sync.get({
+      color: '#E6E6FA'
+    }, function(items) {
+      SelectionUtils.highlightRange(items.color);
+      const selection = window.getSelection();
 
-    const clips = document.querySelectorAll('clip[data-ifuuid="' + insightFactory.currentUUID + '"]');
-    clips.forEach((clip) => {
-      clip.addEventListener('mouseenter', insightFactory.renderPopper);
-      clip.addEventListener('mouseleave', insightFactory.removePopper);
-    });
-
-    // mark this one as saved
-    const clip = insightFactory.selections.find((s) => {
-      return s.uuid === insightFactory.currentUUID;
-    });
-    if(clip) {
-      clip.saved = true;
-      chrome.storage.local.get(['ifWorkspace'], function(workspace) {
-        // submit the clip
-        const clipData = {
-          content: insightFactory.currentSelection,
-          member: insightFactory.profile.memberid,
-          uid: insightFactory.currentUUID,
-          ranges: selection.getRangeAt(0),
-          type: 'clip',
-          url: window.location.href,
-          workspace: workspace.id
-        };
-        chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
-          $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
-          $('.delete-clip').removeClass('disabled');
-          selection.empty();
-        });
+      const clips = document.querySelectorAll('clip[data-ifuuid="' + insightFactory.currentUUID + '"]');
+      clips.forEach((clip) => {
+        clip.addEventListener('mouseenter', insightFactory.renderPopper);
+        clip.addEventListener('mouseleave', insightFactory.removePopper);
       });
-    }
+
+      // mark this one as saved
+      const clip = insightFactory.selections.find((s) => {
+        return s.uuid === insightFactory.currentUUID;
+      });
+      if(clip) {
+        clip.saved = true;
+        chrome.storage.local.get(['ifWorkspace'], function(workspace) {
+          // submit the clip
+          const clipData = {
+            content: insightFactory.currentSelection,
+            member: insightFactory.profile.memberid,
+            uid: insightFactory.currentUUID,
+            ranges: selection.getRangeAt(0),
+            type: 'clip',
+            url: window.location.href,
+            workspace: workspace.id
+          };
+          chrome.runtime.sendMessage({ cmd: 'submit-clip', data: clipData }, function(response) {
+            $('.highlight-clip').hide().removeClass('fa-highlighter').addClass('fa-check-circle').fadeIn('slow');
+            $('.delete-clip').removeClass('disabled');
+            selection.empty();
+          });
+        });
+      }
+    });
   });
 
   $(document).on('click', 'a.tag-clip', function(e) {

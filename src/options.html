@@ -15,14 +15,19 @@
     <div id="popup-content">
       <div class="row">
         <div class="four columns">
-          <img src="/img/logo-cause-analytics-colour.png" width="290px"/>
+          <img src="/img/logo-cause-analytics-colour.png" width="290px" />
           <hr>
           <label>
             <input type="checkbox" id="highlight">
             Use highlighter
           </label>
 
-          <button class="button button-primary" id="save">Save</button>
+          <div>
+            <label for="color">Highlighter colour</label>
+            <input type="color" id="color" name="color" value="#e66465">
+          </div>
+
+          <button class="button button-primary mt-20" id="save">Save</button>
           <div id="status" class="mt-20"></div>
         </div>
         <div class="four columns">&nbsp;</div>
