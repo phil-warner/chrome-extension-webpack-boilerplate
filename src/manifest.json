@@ -17,7 +17,8 @@
     "run_at": "document_end"
   }],
   "icons": {
-    "32": "img/favicon-32x32.gif",
+    "16": "img/favicon-32x32.gif",
+    "48": "img/icn-ca-app.png",
     "128": "img/cause-logo.png"
   },
   "web_accessible_resources": [
