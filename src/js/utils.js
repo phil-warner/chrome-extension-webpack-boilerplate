@@ -236,8 +236,12 @@ class AuthUtils {
           });
         });
       } else {
-        chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
-          AuthUtils.setDefaultWorkflow(workflows[0]);
+        chrome.storage.local.get(['ifWorkflow'], function(result) {
+          if(!result.ifWorkflow) {
+            chrome.runtime.sendMessage({ cmd: 'get-workflows', workspace: workspaces.ifWorkspaces[0] }, function(workflows) {
+              AuthUtils.setDefaultWorkflow(workflows[0]);
+            });
+          }
         });
       }
     });

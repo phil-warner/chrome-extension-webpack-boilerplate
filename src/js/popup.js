@@ -168,7 +168,6 @@ const SettingsModel = function() {
 };
 
 
-//$(document).ready(function() {
 window.onload = function() {
 
   // initialize popup

@@ -74,8 +74,8 @@ const initTypeForm = function(options) {
 
       // load the typeform
       const embedElement = document.querySelector(options.target);
-      const bookmarkUrl = window.location.href.slice(0, window.location.href.indexOf('#'));
-      const typeformUrl = 'https://causeanalytics.typeform.com/to/' + workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&url=' + bookmarkUrl + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + workflow.workflowid + '&workspaceid=' + workspace.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note;
+      const bookmarkUrl = encodeURIComponent(window.location.href);
+      const typeformUrl = 'https://causeanalytics.typeform.com/to/' + workflow.uid + '?ifuuid=' + insightFactory.currentUUID + '&memberid=' + insightFactory.profile.memberid + '&workflowid=' + workflow.workflowid + '&workspaceid=' + workspace.id + '&cliptype=' + options.cliptype + '&clip=' + insightFactory.currentSelection + '&note=' + options.note + '&url=' + bookmarkUrl;
 
       window.typeformEmbed.makeWidget(embedElement, typeformUrl, {
         hideFooter: true,
@@ -106,7 +106,9 @@ const initTypeForm = function(options) {
 
           }
           // close the modal
-          $('.close-cause-clipper-modal').click();
+          setTimeout(function() {
+            $('.close-cause-clipper-modal').click();
+          }, 1500);
         }
       });
     });
