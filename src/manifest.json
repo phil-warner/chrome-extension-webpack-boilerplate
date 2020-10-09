@@ -2,7 +2,7 @@
   "name": "Cause Analytics Clipper",
   "description": " Use the this extension to save things you see on the web into your Cause Analytics account.",
   "options_page": "options.html",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "background": {
     "scripts": ["js/jquery-3.4.1.min.js", "js/background.js"]
   },

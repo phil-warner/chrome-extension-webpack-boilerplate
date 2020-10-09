@@ -1,4 +1,4 @@
-const STRAPI_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTU5MTY5NDk5NCwiZXhwIjoxNTk0Mjg2OTk0fQ.adGyoCgW7_9Vfa-s_P0uThFML7a7fWyRF80aSH7aeAo';
+const STRAPI_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlOGVmMWM5NmYwZDE2MTY5ZTNjMTA5OCIsImlhdCI6MTYwMjA3NDc3NywiZXhwIjoxNjA0NjY2Nzc3fQ.3ievzRcZb2Eb3dUEknUYlvw7qNAs5_jtYrN6Z7eAZFo';
 const getProfile = function(sendResponse) {
   $.get('https://app.causeanalytics.com/api/user', function(data) {
     chrome.runtime.sendMessage({
